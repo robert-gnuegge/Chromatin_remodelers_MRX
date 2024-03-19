@@ -4,6 +4,6 @@
 .Ruserdata
 **/*.bam*
 **/*.fastq*
-**/.bt2
-**/.fasta
-**/.RData
+**/*.bt2
+**/*.fasta
+**/*.RData
