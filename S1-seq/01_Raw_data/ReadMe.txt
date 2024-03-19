@@ -1,0 +1,1 @@
+Deep sequencing data are read from external storage devices (see scripts for paths).

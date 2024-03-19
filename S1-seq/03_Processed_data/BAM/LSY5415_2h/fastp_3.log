@@ -1,0 +1,29 @@
+Streaming uncompressed  reads to STDOUT...
+
+Read1 before filtering:
+total reads: 51742531
+total bases: 2638869081
+Q20 bases: 2450264472(92.8528%)
+Q30 bases: 2379649344(90.1769%)
+
+Read1 after filtering:
+total reads: 50885286
+total bases: 2590207347
+Q20 bases: 2423620327(93.5686%)
+Q30 bases: 2355877905(90.9533%)
+
+Filtering result:
+reads passed filter: 50885286
+reads failed due to low quality: 824564
+reads failed due to too many N: 9602
+reads failed due to too short: 23079
+reads with adapter trimmed: 313119
+bases trimmed due to adapters: 4283229
+
+Duplication rate (may be overestimated since this is SE data): 25.7126%
+
+JSON report: fastp.json
+HTML report: fastp_3.html
+
+fastp --in1 tmp2_R1.fastq.gz --adapter_sequence=AGATCGGAAGAGCACACGTCTGAACTCCAGTCA --adapter_fasta /home/robert/Research/Manuscripts/My_manuscripts/23-09-Chromatin_remodeler_Impact_on_MRX_nicking/Data_Analyses_and_Figures/S1-seq/01_Raw_data/2nd_Adpt_linkers.fa -h fastp_3.html --stdout 
+fastp v0.20.1, time used: 1051 seconds

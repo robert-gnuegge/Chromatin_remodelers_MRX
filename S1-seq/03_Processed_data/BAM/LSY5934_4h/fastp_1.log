@@ -1,0 +1,39 @@
+Read1 before filtering:
+total reads: 30865012
+total bases: 1574115612
+Q20 bases: 1460307744(92.77%)
+Q30 bases: 1417397146(90.044%)
+
+Read2 before filtering:
+total reads: 30865012
+total bases: 802490312
+Q20 bases: 739223929(92.1162%)
+Q30 bases: 697843727(86.9598%)
+
+Read1 after filtering:
+total reads: 30865012
+total bases: 1574115612
+Q20 bases: 1460307744(92.77%)
+Q30 bases: 1417397146(90.044%)
+
+Read2 aftering filtering:
+total reads: 30865012
+total bases: 802490312
+Q20 bases: 739223929(92.1162%)
+Q30 bases: 697843727(86.9598%)
+
+Filtering result:
+reads passed filter: 61730024
+reads failed due to low quality: 0
+reads failed due to too many N: 0
+reads failed due to too short: 0
+
+Duplication rate: 0%
+
+Insert size peak (evaluated by paired-end reads): 51
+
+JSON report: fastp.json
+HTML report: fastp_1.html
+
+fastp --in1 /media/robert/Elements/Deep_sequencing_data/24-03-13-S1-seq/Merged_FastQ_files/LSY5934_4h/LSY5934_4h_R1.fastq.gz --in2 /media/robert/Elements/Deep_sequencing_data/24-03-13-S1-seq/Merged_FastQ_files/LSY5934_4h/LSY5934_4h_R2.fastq.gz --out1 tmp_R1.fastq.gz --out2 tmp_R2.fastq.gz --length_required=12 --disable_adapter_trimming --disable_quality_filtering --disable_trim_poly_g -h fastp_1.html 
+fastp v0.20.1, time used: 124 seconds

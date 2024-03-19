@@ -1,0 +1,38 @@
+Read1 before filtering:
+total reads: 21782555
+total bases: 1110910305
+Q20 bases: 1028352156(92.5684%)
+Q30 bases: 997631774(89.8031%)
+
+Read2 before filtering:
+total reads: 21782555
+total bases: 566346430
+Q20 bases: 520249880(91.8607%)
+Q30 bases: 490651597(86.6345%)
+
+Read1 after filtering:
+total reads: 21782555
+total bases: 1110910305
+Q20 bases: 1028352156(92.5684%)
+Q30 bases: 997631774(89.8031%)
+
+Read2 aftering filtering:
+total reads: 21782555
+total bases: 304955770
+Q20 bases: 272816695(89.4611%)
+Q30 bases: 251944409(82.6167%)
+
+Filtering result:
+reads passed filter: 43565110
+reads failed due to low quality: 0
+reads failed due to too many N: 0
+
+Duplication rate: 0%
+
+Insert size peak (evaluated by paired-end reads): 51
+
+JSON report: fastp.json
+HTML report: fastp_2.html
+
+fastp --in1 tmp_R1.fastq.gz --in2 tmp_R2.fastq.gz --out1 tmp2_R1.fastq.gz --out2 tmp2_R2.fastq.gz --umi --umi_loc=read2 --umi_len=12 --disable_adapter_trimming --disable_quality_filtering --disable_trim_poly_g --disable_length_filtering -h fastp_2.html 
+fastp v0.20.1, time used: 82 seconds

@@ -1,0 +1,6 @@
+#!/bin/bash
+
+GENOME=/home/robert/Research/Manuscripts/My_manuscripts/23-09-Chromatin_remodeler_Impact_on_MRX_nicking/Data_Analyses_and_Figures/Reference_genome/03_Processed_data/S288C_R64-4-1_W303_SNPs_MATa_hocs2SrfIcs_hml_hmr.fasta
+OUTPUT_BASE=S288C_R64-4-1_W303_SNPs_MATa_hocs2SrfIcs_hml_hmr_idx
+
+bowtie2-build $GENOME $OUTPUT_BASE
