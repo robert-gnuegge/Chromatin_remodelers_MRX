@@ -68,9 +68,11 @@ stranded_coverage <- function(GAlignments, rpm_normalization = TRUE, verbose = F
 # process all samples =====================================================
 
 # file base paths
-BAM_dir <- "03_Processed_data/BAM"
+BAM_dir <- "/media/robert/Elements/Deep_sequencing_data/24-03-13-S1-seq/BAM"
 save_dir <- "03_Processed_data/S1-seq_coverage"
+dir.create(path = save_dir, showWarnings = FALSE)
 plot_dir <- "04_Plots/Mapping_edit_distance_distributions"
+dir.create(path = plot_dir, showWarnings = FALSE)
 
 # initialize data.frames for result recording
 mapping_stats <- data.frame()
