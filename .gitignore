@@ -7,6 +7,3 @@
 **/*.bt2
 **/*.fasta
 **/*.RData
-**/01_Raw_data/
-**/03_Processed_data/
-**/04_Plots/
