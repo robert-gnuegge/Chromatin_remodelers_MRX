@@ -1,11 +1,9 @@
 #!/bin/bash
 
-declare -a arr=("LSY5935_4h")
-
-# declare -a arr=("LSY4518-13B_0h" "LSY4518-13B_1h" "LSY4518-13B_2h" "LSY4518-13B_4h"
-# 	"LSY5415_0h" "LSY5415_1h" "LSY5415_2h" "LSY5415_4h"
-# 	"LSY5934_0h" "LSY5934_1h" "LSY5934_2h" "LSY5934_4h"
-# 	"LSY5935_0h" "LSY5935_1h" "LSY5935_2h" "LSY5935_4h")
+declare -a arr=("LSY4518-13B_0h" "LSY4518-13B_1h" "LSY4518-13B_2h" "LSY4518-13B_4h"
+	"LSY5415_0h" "LSY5415_1h" "LSY5415_2h" "LSY5415_4h"
+	"LSY5934_0h" "LSY5934_1h" "LSY5934_2h" "LSY5934_4h"
+	"LSY5935_0h" "LSY5935_1h" "LSY5935_2h" "LSY5935_4h")
 
 
 for SAMPLE in "${arr[@]}"

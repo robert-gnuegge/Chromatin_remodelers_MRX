@@ -12,9 +12,6 @@ source(file = "../Src/JFly_colors.R")
 source(file = "../Src/Misc_helper_functions.R")
 source(file = "../Src/Genomic_helper_functions.R")
 
-# # load helper files and functions
-# source(file = "/home/robert/Research/Manuscripts/My_manuscripts/20-04-17-MRX_nicking_manuscript/Analysis_scripts/Misc/Genomic_helper_functions.R")
-# source(file = "/home/robert/Research/Manuscripts/My_manuscripts/20-04-17-MRX_nicking_manuscript/Analysis_scripts/Misc/Misc_helper_functions.R")
 
 # function definitions ====================================================
 
