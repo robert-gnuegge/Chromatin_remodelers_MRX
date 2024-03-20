@@ -6,8 +6,8 @@
 
 
 # read data ---------------------------------------------------------------
-cut <- read.table(file = "../Misc/01_Raw_data/All_cutting_data.txt", header = TRUE)
-resect <- read.table(file = "../Misc/01_Raw_data/All_resection_data.txt", header = TRUE)
+cut <- read.table(file = "../Misc/03_Processed_data/All_cutting_data.txt", header = TRUE)
+resect <- read.table(file = "../Misc/03_Processed_data/All_resection_data.txt", header = TRUE)
 
 # only keep relevant strains
 unique(cut$strain)
