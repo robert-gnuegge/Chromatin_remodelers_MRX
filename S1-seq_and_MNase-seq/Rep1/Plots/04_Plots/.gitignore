@@ -3,3 +3,8 @@
 # Except this file
 !.gitignore
 !ReadMe.txt
+!*.tex
+!*.R
+
+# ...even if they are in subdirectories
+!*/
