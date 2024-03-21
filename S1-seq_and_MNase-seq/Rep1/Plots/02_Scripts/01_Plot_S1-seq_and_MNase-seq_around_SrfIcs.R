@@ -181,7 +181,7 @@ OT_4h <- OverlayTrack(trackList = list(OT_MNase_seq_4h, OT_S1_seq_4h))
 # plot
 dir.create(path = paste0(plot_dir, "/", DSB_locus), showWarnings = FALSE)
 pdf(file = "tmp.pdf", width = 3, height = 4.5)
-plotTracks(trackList = list(OT_AT, OT_0h, OT_1h,  OT_2h, OT_4h), sizes = c(0.05, rep(0.95/4, 4)),
+plotTracks(trackList = list(AT_genes, OT_0h, OT_1h,  OT_2h, OT_4h), sizes = c(0.05, rep(0.95/4, 4)),
            from = start(roi), to = end(roi), chromosome = seqnames(roi), margin = 0)
 dev.off()
 GS_embed_fonts(input = "tmp.pdf", output = paste0(plot_dir, "/", DSB_locus, "/Plot.pdf"))
@@ -194,19 +194,3 @@ write.table(x = tmp, file = paste0(plot_dir, "/", DSB_locus, "/axis_ranges.txt")
 
 
 # }
-# 
-# write.table(x = Y_axis_ranges, file = paste0(plot_dir, "/Y_axis_ranges.txt"), row.names = FALSE)
-# 
-# 
-# 
-# # AnnotationTrack ---------------------------------------------------------
-# # data downloaded from yeastmine.yeastgenome.org and curated with Adjust_chromosomal_features.R
-# 
-# load(file = "/home/robert/Research/Manuscripts/My_manuscripts/20-04-17-MRX_nicking_manuscript/Data/S_cerevisiae_chromosomal_features/S_cerevisiae_genome_features.RData")
-# 
-# # adjust for use with AnnotationTrack
-# names(mcols(all_features))[1] <- "id"
-# all_features <- all_features[!(all_features$id == "") & all_features$type == "ORF"]
-# 
-# AT <- AnnotationTrack(range = all_features, name = NULL, showFeatureId = FALSE, cex = 0.67,  # featureAnnotation = "id"
-#                       arrowHeadMaxWidth = 10, fill = "white", col = "gray", fontcolor.item = "black")
