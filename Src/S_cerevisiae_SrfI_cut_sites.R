@@ -17,6 +17,6 @@ SrfIcs <- GRanges(seqnames = SrfIcs_df$seqnames, ranges = IRanges(start = SrfIcs
 SrfIcs$DSB_kinetics_rank <- c(5, 1, 19, 12, 2, 14, 9, 18, 21, 8, 3, 16, 13, 10, 15, 4, 6, 7, 11, 20, 17) 
 S_cerevisiae_seqinfo <- Seqinfo(seqnames = c(paste0("chr", as.roman(1:16)), "chrM", "micron"), 
                                 seqlengths = c(230218, 813184, 316620, 1531933, 576874, 270161, 1090940, 562643, 439888, 
-                                               745751, 666816, 1078177, 924431, 784333, 1091291, 948066, 85779, 6392))
+                                               745751, 666816, 1078177, 924431, 784333, 1091291, 948066, 85779, 6367))
 seqlevels(SrfIcs) <- seqlevels(S_cerevisiae_seqinfo)
 seqinfo(SrfIcs) <- S_cerevisiae_seqinfo

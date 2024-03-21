@@ -8,9 +8,9 @@
 library(GenomicAlignments)
 
 # read helper functions and files -----------------------------------------
-source(file = "../Src/JFly_colors.R")
-source(file = "../Src/Misc_helper_functions.R")
-source(file = "../Src/Genomic_helper_functions.R")
+source(file = "../../../Src/JFly_colors.R")
+source(file = "../../../Src/Misc_helper_functions.R")
+source(file = "../../../Src/Genomic_helper_functions.R")
 
 
 # function definitions ====================================================

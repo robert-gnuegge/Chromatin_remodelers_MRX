@@ -1,6 +1,6 @@
 # unambiguous colors (for both colorblinds and non-colorblinds)
 # http://jfly.iam.u-tokyo.ac.jp/html/color_blind/
-JFlyColors <- c(
+JFly_colors <- c(
   rgb(0,0,0),# black
   rgb(0.9,0.6,0),# orange
   rgb(0.35,0.7,0.9),# sky blue

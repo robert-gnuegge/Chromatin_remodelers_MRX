@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd /home/robert/Research/Manuscripts/My_manuscripts/23-09-Chromatin_remodeler_Impact_on_MRX_nicking/Data_Analyses_and_Figures/MNase-seq/01_Raw_data
+cd /home/robert/Research/Manuscripts/My_manuscripts/23-09-Chromatin_remodeler_Impact_on_MRX_nicking/Data_Analyses_and_Figures/S1-seq_and_MNase-seq/Rep1/MNase-seq/01_Raw_data
 mkdir -p Merged_FastQ_files
 
 declare -a arr=("LSY4518-13B_0h" "LSY4518-13B_1h" "LSY4518-13B_2h" "LSY4518-13B_4h"

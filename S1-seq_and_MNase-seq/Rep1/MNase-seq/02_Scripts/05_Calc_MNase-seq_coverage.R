@@ -2,15 +2,15 @@
 # purpose: filter alignments, calculate MNase-seq coverage, and extract mapping stats
 # author: Robert Gnuegge (robert.gnuegge@gmail.com)
 # created: 03/20/24
-# last modified: 03/20/24
+# last modified: 03/21/24
 
 # load libraries ----------------------------------------------------------
 library(GenomicAlignments)
 
 # read helper functions and files -----------------------------------------
-source(file = "../Src/JFly_colors.R")
-source(file = "../Src/Misc_helper_functions.R")
-source(file = "../Src/Genomic_helper_functions.R")
+source(file = "../../../Src/JFly_colors.R")
+source(file = "../../../Src/Misc_helper_functions.R")
+source(file = "../../../Src/Genomic_helper_functions.R")
 
 
 # process all samples =====================================================
