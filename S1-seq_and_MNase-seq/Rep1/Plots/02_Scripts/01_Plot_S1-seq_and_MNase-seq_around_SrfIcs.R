@@ -87,7 +87,7 @@ OT_AT <- OverlayTrack(trackList = list(AT_genes, AT_SrfIcs))
 
 
 # plotting ----------------------------------------------------------------
-plot_dir <- "04_Plots/S1-seq_and_MNase-seq_Plots"
+plot_dir <- "04_Plots/MRE11/S1-seq_and_MNase-seq_Plots"
 dir.create(path = plot_dir, showWarnings = FALSE, recursive = TRUE)
 
 # set global Gviz parameters for plotting
