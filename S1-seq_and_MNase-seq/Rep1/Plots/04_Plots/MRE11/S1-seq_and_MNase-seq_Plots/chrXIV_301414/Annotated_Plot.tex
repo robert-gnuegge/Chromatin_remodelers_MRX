@@ -27,17 +27,17 @@
 		%
 		% add x axis scale
 		\setlength{\ScaleBarEndLength}{1ex}
-		\draw[Scale] ($(pic.south west)+(0.02\PicWidth,1\PicHeight)$) coordinate (ScaleStart) -- ++(0.05\PicWidth,0) coordinate (ScaleEnd) node[midway, above, BarLabel, yshift=0.5ex] {100 bp}; 
+		\draw[Scale] ($(pic.south west)+(0.04\PicWidth,1\PicHeight)$) coordinate (ScaleStart) -- ++(0.05\PicWidth,0) coordinate (ScaleEnd) node[midway, above, BarLabel, yshift=0.5ex] {100 bp}; 
 		\draw[Scale] ($(ScaleStart)-(0,0.5\ScaleBarEndLength)$) -- ++(0,\ScaleBarEndLength);
 		\draw[Scale] ($(ScaleEnd)-(0,0.5\ScaleBarEndLength)$) -- ++(0,\ScaleBarEndLength);
 		% 
 		% add y axis scale
-		\draw[Scale] ($(pic.south west)+(0.82\PicWidth,0.675\PicHeight)$) coordinate (ScaleStart) -- ++(0,0.05\PicHeight) coordinate (ScaleEnd);
+		\draw[Scale] ($(pic.south west)+(0.15\PicWidth,0.675\PicHeight)$) coordinate (ScaleStart) -- ++(0,0.05\PicHeight) coordinate (ScaleEnd);
 		\draw[Scale] ($(ScaleStart)-(0.5\ScaleBarEndLength,0)$) -- ++(\ScaleBarEndLength,0);
 		\draw[Scale] ($(ScaleEnd)-(0.5\ScaleBarEndLength,0)$) -- ++(\ScaleBarEndLength,0);
 		% MNase-seq label
 		\path ($(ScaleStart)!0.5!(ScaleEnd)$) node[BarLabel, anchor=east, xshift=-0.5ex] {
-			\textcolor{white!60!black}2%
+			\textcolor{white!60!black}3%
 			\textcolor{white!40!black}5\,%
 			\textcolor{white!60!black}R%
 			\textcolor{white!40!black}P%
@@ -45,7 +45,7 @@
 		};
 		% S1-seq label
 		\path ($(ScaleStart)!0.5!(ScaleEnd)$) node[BarLabel, anchor=west, xshift=0.5ex] {
-			\textcolor{JFlyColor7}5%
+			\textcolor{JFlyColor7}7%
 			\textcolor{JFlyColor2}0%
 			\textcolor{JFlyColor3}0\,%
 			\textcolor{JFlyColor8}R%

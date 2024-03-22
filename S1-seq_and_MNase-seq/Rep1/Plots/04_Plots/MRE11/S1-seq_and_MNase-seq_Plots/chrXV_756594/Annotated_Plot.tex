@@ -1,0 +1,73 @@
+\documentclass[tikz]{standalone}
+
+\input{../Format.tex}
+
+\begin{document}
+% 	
+	\begin{tikzpicture}[every node/.style={inner sep=0ex},
+						TimeLabel/.style={font=\bfseries\small},
+						BarLabel/.style={},
+						Scale/.style={thick}]
+		%
+		\footnotesize
+		\renewcommand{\ScalingFactor}{1}
+		\path (0,0) node (pic) {\includegraphics[scale=\ScalingFactor]{Plot.pdf}};
+		%
+		% \DrawGrid{pic}
+		\GetPicWidthHeight{pic}
+		%
+		% time labels
+		\path ($(pic.south west)+(1\PicWidth,0.83\PicHeight)$) node[TimeLabel, anchor=west] {0\,h};
+		\path ($(pic.south west)+(1\PicWidth,0.595\PicHeight)$) node[TimeLabel, anchor=west] {1\,h};
+		\path ($(pic.south west)+(1\PicWidth,0.355\PicHeight)$) node[TimeLabel, anchor=west] {2\,h};
+		\path ($(pic.south west)+(1\PicWidth,0.12\PicHeight)$) node[TimeLabel, anchor=west] {4\,h};
+		%
+		% add SrfIcs
+		\path ($(pic.south west)+(0.501\PicWidth,0.965\PicHeight)$) node[SrfImark, anchor=south] (SrfIcs) {};
+		%
+		% add x axis scale
+		\setlength{\ScaleBarEndLength}{1ex}
+		\draw[Scale] ($(pic.south west)+(0.04\PicWidth,1\PicHeight)$) coordinate (ScaleStart) -- ++(0.05\PicWidth,0) coordinate (ScaleEnd) node[midway, above, BarLabel, yshift=0.5ex] {100 bp}; 
+		\draw[Scale] ($(ScaleStart)-(0,0.5\ScaleBarEndLength)$) -- ++(0,\ScaleBarEndLength);
+		\draw[Scale] ($(ScaleEnd)-(0,0.5\ScaleBarEndLength)$) -- ++(0,\ScaleBarEndLength);
+		% 
+		% add y axis scale
+		\draw[Scale] ($(pic.south west)+(0.82\PicWidth,0.685\PicHeight)$) coordinate (ScaleStart) -- ++(0,0.05\PicHeight) coordinate (ScaleEnd);
+		\draw[Scale] ($(ScaleStart)-(0.5\ScaleBarEndLength,0)$) -- ++(\ScaleBarEndLength,0);
+		\draw[Scale] ($(ScaleEnd)-(0.5\ScaleBarEndLength,0)$) -- ++(\ScaleBarEndLength,0);
+		% MNase-seq label
+		\path ($(ScaleStart)!0.5!(ScaleEnd)$) node[BarLabel, anchor=east, xshift=-0.5ex] {
+			\textcolor{white!60!black}3%
+			\textcolor{white!40!black}0\,%
+			\textcolor{white!60!black}R%
+			\textcolor{white!40!black}P%
+			\textcolor{white!60!black}M%
+		};
+		% S1-seq label
+		\path ($(ScaleStart)!0.5!(ScaleEnd)$) node[BarLabel, anchor=west, xshift=0.5ex] {
+			\textcolor{JFlyColor7}1%
+			\textcolor{JFlyColor2}7%
+			\textcolor{JFlyColor3}5\,%
+			\textcolor{JFlyColor8}R%
+			\textcolor{JFlyColor7}P%
+			\textcolor{JFlyColor2}M%
+		};
+		%
+		% add legend
+		\setlength{\LegSymbolLength}{2ex}
+		\setlength{\LegSymbolItemSep}{0.5ex}
+		\setlength{\LegItemSep}{0.5ex}
+		\path ($(pic.north east)+(-0.5ex,3ex)$) node[anchor=south east] (fun30) {(\textit{fun30$\Delta$})\strut};
+		\draw[JFlyColor3, thick] (fun30.west) ++(-\LegSymbolItemSep,-0.5\LegItemSep) coordinate(fun30b) -- ++(0,-\LegSymbolLength);
+		\draw[JFlyColor8, thick] (fun30.west) ++(-\LegSymbolItemSep,0.5\LegItemSep) coordinate(fun30t) -- ++(0,\LegSymbolLength);
+		\path ($(fun30-|fun30b)+(-3\LegSymbolItemSep,0)$) node[anchor=east] (WT) {(WT)\strut};
+		\draw[JFlyColor7, thick] (WT.west) ++(-\LegSymbolItemSep,-0.5\LegItemSep) coordinate(WTb) -- ++(0,-\LegSymbolLength);
+		\draw[JFlyColor2, thick] (WT.west) ++(-\LegSymbolItemSep,0.5\LegItemSep) coordinate(WTt) -- ++(0,\LegSymbolLength);
+		\path ($(WTb)+(-3\LegSymbolItemSep,-0.5\LegSymbolLength)$) node[anchor=east] (bLabel) {bottom:\strut};
+		\path ($(bLabel.east|-WTt)+(0,0.5\LegSymbolLength)$) node[anchor=east] (tLabel) {top:\strut};
+		% frame
+		\setlength{\tmp}{0.5ex}
+		\draw[thick] ($(bLabel.west|-WTb)-(\tmp,\LegSymbolLength+\tmp)$) rectangle ($(fun30t-|fun30.east)+(\tmp,\LegSymbolLength+\tmp)$); 
+	\end{tikzpicture}
+	% 
+\end{document}
