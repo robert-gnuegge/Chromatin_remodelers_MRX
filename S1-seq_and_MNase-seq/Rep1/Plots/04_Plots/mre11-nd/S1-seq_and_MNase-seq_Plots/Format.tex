@@ -1,0 +1,73 @@
+%-------------------------- packages ---------------------------%
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{ifthen}
+
+% %------------------------- font format -------------------------%
+% % use helvetica as sans serif font
+\usepackage{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+
+%--------------------------- colors ----------------------------%
+
+% define JFlyColors
+\definecolor{JFlyColor1}{rgb}{0,0,0} % black
+\definecolor{JFlyColor2}{rgb}{0.9,0.6,0} % orange
+\definecolor{JFlyColor3}{rgb}{0.35,0.7,0.9} % sky blue
+\definecolor{JFlyColor4}{rgb}{0.8,0.4,0} % yellowish red
+\definecolor{JFlyColor5}{rgb}{0,0.6,0.5} % bluish green
+\definecolor{JFlyColor6}{rgb}{0.95,0.9,0.25} % yellow
+\definecolor{JFlyColor7}{rgb}{0,0.45,0.7} % blue
+\definecolor{JFlyColor8}{rgb}{0.8,0.6,0.7} % reddish purple
+
+%-------------------------- lengthes ---------------------------%
+\newlength{\PicWidth}
+\newlength{\PicHeight}
+\newlength{\ScaleBarEndLength}
+\newlength{\LegSymbolLength}
+\newlength{\LegSymbolItemSep}
+\newlength{\LegItemSep}
+\newlength{\tmp}
+
+% scaling
+\newcommand{\ScalingFactor}{}
+
+%------------------------- TikZ setup --------------------------%
+\usetikzlibrary{calc, shapes} %, decorations.pathreplacing, decorations.pathmorphing, arrows.meta, shapes, backgrounds}
+\usepgflibrary{fpu} 
+\tikzset{SrfImark/.style={fill=red, draw, isosceles triangle, minimum width=1ex, minimum height=1ex, shape border rotate=-90}}%
+
+%----------------------- Helper commands -----------------------%
+\newcommand{\DrawGrid}[1]{
+  % x
+  \foreach \x in {0,10,...,100}{
+    \draw[red, opacity=0.5] ($(#1.north west)!\x/100!(#1.north east)$) node[anchor=south,font={\tiny}] {\x} -- ($(#1.south west)!\x/100!(#1.south east)$);
+  }
+  \foreach \x in {5,15,...,95}{
+    \draw[red, opacity=0.25] ($(#1.north west)!\x/100!(#1.north east)$) -- ($(#1.south west)!\x/100!(#1.south east)$);
+  }
+  % y
+  \foreach \y in {0,10,...,100}{
+    \draw[red, opacity=0.5] ($(#1.south west)!\y/100!(#1.north west)$) node[anchor=east,font={\tiny}] {\y} -- ($(#1.south east)!\y/100!(#1.north east)$);
+  }
+  \foreach \y in {5,15,...,95}{
+    \draw[red, opacity=0.25] ($(#1.south west)!\y/100!(#1.north west)$) -- ($(#1.south east)!\y/100!(#1.north east)$);
+  }
+}
+
+\newcommand{\GetPicWidthHeight}[1]{
+    \pgfkeys{/pgf/fpu=true, pgf/fpu/output format=fixed}
+    \pgfextractx{\PicWidth}{\pgfpointdiff{\pgfpointanchor{#1}{west}}{\pgfpointanchor{#1}{east}}}
+    \pgfextracty{\PicHeight}{\pgfpointdiff{\pgfpointanchor{#1}{south}}{\pgfpointanchor{#1}{north}}}
+    \pgfkeys{/pgf/fpu=false}
+}
+
+\newcommand{\PrintFigDim}{
+    \pgfextractx{\PicWidth}{\pgfpointdiff{\pgfpointanchor{current bounding box}{west}}{\pgfpointanchor{current bounding box}{east}}}
+    \pgfextracty{\PicHeight}{\pgfpointdiff{\pgfpointanchor{current bounding box}{south}}{\pgfpointanchor{current bounding box}{north}}}
+    \pgfmathsetmacro{\Winches}{\PicWidth/72} % convert to inches
+    \pgfmathsetmacro{\Hinches}{\PicHeight/72} % convert to inches
+    \pgfmathsetmacro{\Wmm}{\PicWidth/2.835} % convert to mm
+    \pgfmathsetmacro{\Hmm}{\PicHeight/2.835} % convert to mm
+    \path (current bounding box.south east) node[anchor=south east, red, fill=white] {\pgfmathprintnumber[precision=2]{\Wmm}~mm x \pgfmathprintnumber[precision=2]{\Hmm}~mm};
+}
