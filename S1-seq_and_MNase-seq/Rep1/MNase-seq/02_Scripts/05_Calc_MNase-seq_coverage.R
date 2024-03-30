@@ -41,13 +41,13 @@ for(sample in samples){
   # YS: alignment score for opposite mate
   # NM: edit distance
   # isize: insert size
-  all_mapped <- length(tmp)  # for mapping statistics
+  all_mapped <- length(tmp) / 2  # paired-end reads, for mapping statistics
   cat(all_mapped, "alignments read.")
   
   # Remove alignments with too large insert size ----------------------------
   cat("\nRemoving alignments with insert size >250 bp...")
   tmp <- tmp[mcols(first(tmp))$isize <= 250]
-  mapped <- length(tmp)
+  mapped <- length(tmp) / 2  # paired-end reads
   cat(" kept ", mapped, " alignments (",  round(100 * mapped / all_mapped, digits = 2), "%).", sep = "")
 
   # plot edit distance distribution -----------------------------------------
@@ -89,31 +89,19 @@ for(sample in samples){
 
   # Adjust to median insert size = 147 bp -----------------------------------
   cat("\nMedian insert size is ", med , " bp.", sep = "")
-  tmp_trimmed <- tmp
   # trim
   if(med != 147){
-      cat(" Adjusting to median insert size = 147 bp...")
-      trim_length <- (med - 147)
-      tmp_trimmed <- tmp_trimmed[!(width(tmp_trimmed) < trim_length)]  # removes ranges that would be trimmed to width < 0
-      if(trim_length %% 2 != 0){  # in case trim_length is uneven
-        # add ceiling of half trim_length randomly to left or right end of insert
-        trim_left <- ifelse(test = sample(x = c(0, 1), size = length(tmp), replace = TRUE), yes = ceiling(0.5 * trim_length), no = floor(0.5 * trim_length))
-      }else{
-        trim_left <- 0.5 * trim_length
-      }
-      trim_right <- trim_length - trim_left
-      start(tmp_trimmed) <- start(tmp_trimmed) + trim_left
-      end(tmp_trimmed) <- end(tmp_trimmed) - trim_right
-      tmp_trimmed <- trim(tmp_trimmed)  # in case of out-of-bond ranges
+      cat(" Adjusting to max insert size = 147 bp...")
+      tmp[width(tmp) > 147] <- resize(x = tmp[width(tmp) > 147], width = 147, fix = "center")
   }
 
   # calculate MNase-seq coverage --------------------------------------------
   cat("\nCalculating coverage...")
   tmp_coverage <- GRanges(coverage(tmp))
-  tmp_coverage$score <- tmp_coverage$score / length(tmp_coverage) * 1e6  # convert to RPM
+  tmp_coverage$score <- tmp_coverage$score / mapped * 1e6  # convert to RPM
   assign(x = paste0(dash_to_underscore(sample), "_MNase_seq"), value = tmp_coverage)
   tmp_trimmed_coverage <- GRanges(coverage(tmp_trimmed))
-  tmp_trimmed_coverage$score <- tmp_trimmed_coverage$score / length(tmp_trimmed_coverage) * 1e6  # convert to RPM
+  tmp_trimmed_coverage$score <- tmp_trimmed_coverage$score / mapped * 1e6  # convert to RPM
   assign(x = paste0(dash_to_underscore(sample), "_MNase_seq_trimmed"), value = tmp_trimmed_coverage)
   
   # record mapping statistics data ------------------------------------------

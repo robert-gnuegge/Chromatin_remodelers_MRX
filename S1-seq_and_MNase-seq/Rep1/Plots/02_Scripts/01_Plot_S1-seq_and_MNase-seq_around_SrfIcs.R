@@ -2,7 +2,7 @@
 # purpose: generate S1-seq and MNase-seq coverage plots around genomic SrfIcs in compact form
 # author: Robert Gnuegge (robert.gnuegge@gmail.com)
 # created: 03/21/24
-# last modified: 03/22/24
+# last modified: 03/30/24
 
 # load libraries ----------------------------------------------------------
 library(GenomicRanges)
@@ -54,17 +54,16 @@ process_MNase_seq <- function(GRanges, roi, negative_score = FALSE){
   return(tmp)
 }
 
-load(file = "../MNase-seq/03_Processed_data/MNase-seq_coverage/LSY4518-13B_MNase-seq_trimmed.RData")
-LSY4518_13B_0h_MNase_seq_trimmed <- process_MNase_seq(GRanges = LSY4518_13B_0h_MNase_seq_trimmed, roi = roi)
-LSY4518_13B_1h_MNase_seq_trimmed <- process_MNase_seq(GRanges = LSY4518_13B_1h_MNase_seq_trimmed, roi = roi)
-LSY4518_13B_2h_MNase_seq_trimmed <- process_MNase_seq(GRanges = LSY4518_13B_2h_MNase_seq_trimmed, roi = roi)
-LSY4518_13B_4h_MNase_seq_trimmed <- process_MNase_seq(GRanges = LSY4518_13B_4h_MNase_seq_trimmed, roi = roi)
+load(file = "../MNase-seq/03_Processed_data/MNase-seq_coverage/MNase-seq_117bp.RData")
+LSY4518_13B_0h_MNase_seq <- process_MNase_seq(GRanges = LSY4518_13B_0h_MNase_seq_117bp, roi = roi)
+LSY4518_13B_1h_MNase_seq <- process_MNase_seq(GRanges = LSY4518_13B_1h_MNase_seq_117bp, roi = roi)
+LSY4518_13B_2h_MNase_seq <- process_MNase_seq(GRanges = LSY4518_13B_2h_MNase_seq_117bp, roi = roi)
+LSY4518_13B_4h_MNase_seq <- process_MNase_seq(GRanges = LSY4518_13B_4h_MNase_seq_117bp, roi = roi)
 
-load(file = "../MNase-seq/03_Processed_data/MNase-seq_coverage/LSY5415_MNase-seq_trimmed.RData")
-LSY5415_0h_MNase_seq_trimmed <- process_MNase_seq(GRanges = LSY5415_0h_MNase_seq_trimmed, roi = roi, negative_score = TRUE)
-LSY5415_1h_MNase_seq_trimmed <- process_MNase_seq(GRanges = LSY5415_1h_MNase_seq_trimmed, roi = roi, negative_score = TRUE)
-LSY5415_2h_MNase_seq_trimmed <- process_MNase_seq(GRanges = LSY5415_2h_MNase_seq_trimmed, roi = roi, negative_score = TRUE)
-LSY5415_4h_MNase_seq_trimmed <- process_MNase_seq(GRanges = LSY5415_4h_MNase_seq_trimmed, roi = roi, negative_score = TRUE)
+LSY5415_0h_MNase_seq <- process_MNase_seq(GRanges = LSY5415_0h_MNase_seq_117bp, roi = roi, negative_score = TRUE)
+LSY5415_1h_MNase_seq <- process_MNase_seq(GRanges = LSY5415_1h_MNase_seq_117bp, roi = roi, negative_score = TRUE)
+LSY5415_2h_MNase_seq <- process_MNase_seq(GRanges = LSY5415_2h_MNase_seq_117bp, roi = roi, negative_score = TRUE)
+LSY5415_4h_MNase_seq <- process_MNase_seq(GRanges = LSY5415_4h_MNase_seq_117bp, roi = roi, negative_score = TRUE)
 # make scores negative for plotting below WT data
 
 # AnnotationTrack ---------------------------------------------------------
@@ -149,20 +148,20 @@ for (n in 1:length(SrfIcs)){
   OT_S1_seq_4h <- OverlayTrack(trackList = list(DT_S1_seq_WT_4h, DT_S1_seq_fun30_4h))
   
   # calculate MNase-seq ylim
-  all_MNase_seq <- c(LSY4518_13B_0h_MNase_seq_trimmed, LSY4518_13B_1h_MNase_seq_trimmed, LSY4518_13B_2h_MNase_seq_trimmed, LSY4518_13B_4h_MNase_seq_trimmed,
-                     LSY5415_0h_MNase_seq_trimmed, LSY5415_1h_MNase_seq_trimmed, LSY5415_2h_MNase_seq_trimmed, LSY5415_4h_MNase_seq_trimmed)
+  all_MNase_seq <- c(LSY4518_13B_0h_MNase_seq, LSY4518_13B_1h_MNase_seq, LSY4518_13B_2h_MNase_seq, LSY4518_13B_4h_MNase_seq,
+                     LSY5415_0h_MNase_seq, LSY5415_1h_MNase_seq, LSY5415_2h_MNase_seq, LSY5415_4h_MNase_seq)
   ylim_MNase_seq <- calc_ylim(GRanges = all_MNase_seq, roi = roi, symmetric = TRUE)
   
   # generate MNase-seq DataTracks and merge WT and fun30 into OverlayTracks
-  DT_MNase_seq_WT_0h <- DataTrack(range = LSY4518_13B_0h_MNase_seq_trimmed, type = "polygon", col = MNase_seq_border_col_1, fill.mountain = rep(MNase_seq_col_1, 2), name = "0 h", ylim = ylim_MNase_seq)
-  DT_MNase_seq_WT_1h <- DataTrack(range = LSY4518_13B_1h_MNase_seq_trimmed, type = "polygon", col = MNase_seq_border_col_1, fill.mountain = rep(MNase_seq_col_1, 2), name = "1 h", ylim = ylim_MNase_seq)
-  DT_MNase_seq_WT_2h <- DataTrack(range = LSY4518_13B_2h_MNase_seq_trimmed, type = "polygon", col = MNase_seq_border_col_1, fill.mountain = rep(MNase_seq_col_1, 2), name = "2 h", ylim = ylim_MNase_seq)
-  DT_MNase_seq_WT_4h <- DataTrack(range = LSY4518_13B_4h_MNase_seq_trimmed, type = "polygon", col = MNase_seq_border_col_1, fill.mountain = rep(MNase_seq_col_1, 2), name = "4 h", ylim = ylim_MNase_seq)
+  DT_MNase_seq_WT_0h <- DataTrack(range = LSY4518_13B_0h_MNase_seq, type = "polygon", col = MNase_seq_border_col_1, fill.mountain = rep(MNase_seq_col_1, 2), name = "0 h", ylim = ylim_MNase_seq)
+  DT_MNase_seq_WT_1h <- DataTrack(range = LSY4518_13B_1h_MNase_seq, type = "polygon", col = MNase_seq_border_col_1, fill.mountain = rep(MNase_seq_col_1, 2), name = "1 h", ylim = ylim_MNase_seq)
+  DT_MNase_seq_WT_2h <- DataTrack(range = LSY4518_13B_2h_MNase_seq, type = "polygon", col = MNase_seq_border_col_1, fill.mountain = rep(MNase_seq_col_1, 2), name = "2 h", ylim = ylim_MNase_seq)
+  DT_MNase_seq_WT_4h <- DataTrack(range = LSY4518_13B_4h_MNase_seq, type = "polygon", col = MNase_seq_border_col_1, fill.mountain = rep(MNase_seq_col_1, 2), name = "4 h", ylim = ylim_MNase_seq)
   
-  DT_MNase_seq_fun30_0h <- DataTrack(range = LSY5415_0h_MNase_seq_trimmed, type = "polygon", col = MNase_seq_border_col_2, fill.mountain = rep(MNase_seq_col_2, 2), name = "0 h", ylim = ylim_MNase_seq)
-  DT_MNase_seq_fun30_1h <- DataTrack(range = LSY5415_1h_MNase_seq_trimmed, type = "polygon", col = MNase_seq_border_col_2, fill.mountain = rep(MNase_seq_col_2, 2), name = "1 h", ylim = ylim_MNase_seq)
-  DT_MNase_seq_fun30_2h <- DataTrack(range = LSY5415_2h_MNase_seq_trimmed, type = "polygon", col = MNase_seq_border_col_2, fill.mountain = rep(MNase_seq_col_2, 2), name = "2 h", ylim = ylim_MNase_seq)
-  DT_MNase_seq_fun30_4h <- DataTrack(range = LSY5415_4h_MNase_seq_trimmed, type = "polygon", col = MNase_seq_border_col_2, fill.mountain = rep(MNase_seq_col_2, 2), name = "4 h", ylim = ylim_MNase_seq)
+  DT_MNase_seq_fun30_0h <- DataTrack(range = LSY5415_0h_MNase_seq, type = "polygon", col = MNase_seq_border_col_2, fill.mountain = rep(MNase_seq_col_2, 2), name = "0 h", ylim = ylim_MNase_seq)
+  DT_MNase_seq_fun30_1h <- DataTrack(range = LSY5415_1h_MNase_seq, type = "polygon", col = MNase_seq_border_col_2, fill.mountain = rep(MNase_seq_col_2, 2), name = "1 h", ylim = ylim_MNase_seq)
+  DT_MNase_seq_fun30_2h <- DataTrack(range = LSY5415_2h_MNase_seq, type = "polygon", col = MNase_seq_border_col_2, fill.mountain = rep(MNase_seq_col_2, 2), name = "2 h", ylim = ylim_MNase_seq)
+  DT_MNase_seq_fun30_4h <- DataTrack(range = LSY5415_4h_MNase_seq, type = "polygon", col = MNase_seq_border_col_2, fill.mountain = rep(MNase_seq_col_2, 2), name = "4 h", ylim = ylim_MNase_seq)
   
   OT_MNase_seq_0h <- OverlayTrack(trackList = list(DT_MNase_seq_WT_0h, DT_MNase_seq_fun30_0h))
   OT_MNase_seq_1h <- OverlayTrack(trackList = list(DT_MNase_seq_WT_1h, DT_MNase_seq_fun30_1h))
