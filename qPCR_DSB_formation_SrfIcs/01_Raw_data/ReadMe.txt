@@ -1,0 +1,1 @@
+We exclude most raw data from upload to Github. Upon publication of our work in a scientific journal, raw data will be made available in public repositories (deep sequencing data) or in the supplement of our publication.
