@@ -1,27 +1,17 @@
 # info --------------------------------------------------------------------
-# purpose: plot average S1-seq spreading aligned at nucleosomes
+# purpose: generate S1-seq and MNase-seq coverage plots around genomic SrfIcs in compact form
 # author: Robert Gnuegge (robert.gnuegge@gmail.com)
-# date: 01/24/22
-# version: 2.0
+# created: 03/31/24
+# last modified: 03/31/24
 
-
-# preamble ----------------------------------------------------------------
-
-# set wd to this file's location
-wd_path <- dirname(rstudioapi::getActiveDocumentContext()$path)
-setwd(wd_path)
-
-# libraries
+# load libraries ----------------------------------------------------------
 library(GenomicRanges)
 
-# load helper files and functions
-source(file = "/home/robert/Research/Manuscripts/My_manuscripts/20-04-17-MRX_nicking_manuscript/Analysis_scripts/Misc/Genomic_helper_functions.R")
-source(file = "/home/robert/Research/Manuscripts/My_manuscripts/20-04-17-MRX_nicking_manuscript/Analysis_scripts/Misc/S_cerevisiae_SrfI_cut_sites.R")
-source(file = "/home/robert/Research/Manuscripts/My_manuscripts/20-04-17-MRX_nicking_manuscript/Analysis_scripts/Misc/Misc_helper_functions.R")
-source(file = "/home/robert/Research/Manuscripts/My_manuscripts/20-04-17-MRX_nicking_manuscript/Analysis_scripts/Misc/JFly_colors.R")
-
-plot_dir <- "/home/robert/Research/Manuscripts/My_manuscripts/20-04-17-MRX_nicking_manuscript/Figures/13_Nucleosome_occupancy_impact/LSY4377-12B_4377-15A/S1-seq_aligned_at_nucleosomes"
-
+# read helper functions and files -----------------------------------------
+source(file = "../../../Src/JFly_colors.R")
+source(file = "../../../Src/Misc_helper_functions.R")
+source(file = "../../../Src/Genomic_helper_functions.R")
+source(file = "../../../Src/S_cerevisiae_SrfI_cut_sites.R")
 
 # function definitions ----------------------------------------------------
 
@@ -85,7 +75,25 @@ MNase_seq_4 <- as_nt_resolved_GRanges(GRanges = subsetByIntersect(subject = LSY4
 # process nucleosome center data ------------------------------------------
 
 # read nucleosome centers
-load(file = "/home/robert/Research/Manuscripts/My_manuscripts/20-04-17-MRX_nicking_manuscript/Data/MNase-seq/LSY4377-12B_4377-15A/Nuc_centers_around_SrfIcs.RData")
+load(file = "../MNase-seq/03_Processed_data/Nucleosome_positions/LSY4518-13B_nucleosome_positions.RData")
+
+LSY4518_13B_0h_nucleosome_positions
+
+dist_to_DSB <-  distanceToNearest(x = LSY4518_13B_0h_nucleosome_positions, subject = SrfIcs)
+LSY4518_13B_0h_nucleosome_positions$dist_to_DSB <- mcols(dist_to_DSB)$distance
+
+roi <- DSB_regions(DSBs = SrfIcs, region_width = 10000, up_rev_down_fw = TRUE)
+hits <- findOverlaps(subject = LSY4518_13B_0h_nucleosome_positions, query = roi)
+neg_pos <- ifelse(test = (strand(roi[queryHits(hits)]) == "-"), yes = -1, no = 1)
+LSY4518_13B_0h_nucleosome_positions$dist_to_DSB <- LSY4518_13B_0h_nucleosome_positions$dist_to_DSB * neg_pos
+
+
+tmp <- subsetByIntersect(subject = LSY4518_13B_0h_nucleosome_positions, query = roi[1])
+which.min(abs(tmp$dist_to_DSB))
+tmp <- subsetByIntersect(subject = LSY4518_13B_0h_nucleosome_positions, query = roi[2])
+which.min(abs(tmp$dist_to_DSB))
+
+
 
 # nucleosome properties (according to Jansen et al., 2011; pmid: 21646431)
 nuc_width <- 147
