@@ -5,7 +5,7 @@
 # last modified: 03/29/24
 
 save_dir <- "03_Processed_data/"
-efficiencies <- read.table(file = "../Src/primer_efficiencies.txt", header = TRUE)
+efficiencies <- read.table(file = "../../Src/primer_efficiencies.txt", header = TRUE)
 
 # load libraries ----------------------------------------------------------
 library(errors)  # for error propagation

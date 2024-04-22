@@ -5,8 +5,8 @@
 # last modified: 03/29/24
 
 # read helper functions and files -----------------------------------------
-source(file = "../Src/JFly_colors.R")
-source(file = "../Src/Misc_helper_functions.R")
+source(file = "../../Src/JFly_colors.R")
+source(file = "../../Src/Misc_helper_functions.R")
 
 
 # read data ---------------------------------------------------------------
