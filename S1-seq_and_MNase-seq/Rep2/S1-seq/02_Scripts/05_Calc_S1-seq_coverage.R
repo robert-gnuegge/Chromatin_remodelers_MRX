@@ -1,8 +1,8 @@
 # info --------------------------------------------------------------------
 # purpose: filter alignments, calculate S1-seq coverage, and extract mapping stats
 # author: Robert Gnuegge (robert.gnuegge@gmail.com)
-# created: 03/19/24
-# last modified: 03/19/24
+# created: 04/23/24
+# last modified: 04/23/24
 
 # load libraries ----------------------------------------------------------
 library(GenomicAlignments)
@@ -68,7 +68,8 @@ stranded_coverage <- function(GAlignments, rpm_normalization = TRUE, verbose = F
 # process all samples =====================================================
 
 # file base paths
-BAM_dir <- "/media/robert/Elements/Deep_sequencing_data/24-03-13-S1-seq/BAM"
+BAM_dir <- "03_Processed_data/BAM"
+# BAM_dir <- "/media/robert/Elements/Deep_sequencing_data/24-03-13-S1-seq/BAM"
 save_dir <- "03_Processed_data/S1-seq_coverage"
 dir.create(path = save_dir, showWarnings = FALSE)
 plot_dir <- "04_Plots/Mapping_edit_distance_distributions"
@@ -78,7 +79,7 @@ dir.create(path = plot_dir, showWarnings = FALSE)
 mapping_stats <- data.frame()
 
 # iterate through samples
-samples <- paste0(rep(c("LSY4518-13B", "LSY5415", "LSY5934", "LSY5935"), rep(4, 4)), "_", c(0, 1, 2, 4), "h")
+samples <- paste0(rep(c("LSY4518-13B", "LSY5415"), rep(4, 2)), "_", c(0, 1, 2, 4), "h")
 
 for(sample in samples){
   
@@ -144,8 +145,6 @@ for(sample in samples){
 # save data ---------------------------------------------------------------
 save(list = paste0(dash_to_underscore(samples[grepl(pattern = "LSY4518-13B", x = samples)]), "_S1_seq"), file = paste0(save_dir, "/LSY4518-13B_S1-seq.RData"))
 save(list = paste0(dash_to_underscore(samples[grepl(pattern = "LSY5415", x = samples)]), "_S1_seq"), file = paste0(save_dir, "/LSY5415_S1-seq.RData"))
-save(list = paste0(dash_to_underscore(samples[grepl(pattern = "LSY5934", x = samples)]), "_S1_seq"), file = paste0(save_dir, "/LSY5934_S1-seq.RData"))
-save(list = paste0(dash_to_underscore(samples[grepl(pattern = "LSY5935", x = samples)]), "_S1_seq"), file = paste0(save_dir, "/LSY5935_S1-seq.RData"))
 save(list = paste0(dash_to_underscore(samples), "_S1_seq_unnormalized"), file = paste0(save_dir, "/S1-seq_unnormalized.RData"))
 
 write.table(x = mapping_stats, file = paste0(plot_dir, "/Mapping_stats.txt"), row.names = FALSE)
