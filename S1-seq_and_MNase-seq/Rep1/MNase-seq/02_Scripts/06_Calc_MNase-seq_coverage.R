@@ -1,8 +1,8 @@
 # info --------------------------------------------------------------------
 # purpose: filter alignments, calculate MNase-seq coverage, and extract mapping stats
 # author: Robert Gnuegge (robert.gnuegge@gmail.com)
-# created: 03/20/24
-# last modified: 03/21/24
+# created: 04/25/24
+# last modified: 04/29/24
 
 # load libraries ----------------------------------------------------------
 library(GenomicAlignments)
@@ -16,6 +16,7 @@ source(file = "../../../Src/Genomic_helper_functions.R")
 # process all samples =====================================================
 
 # file base paths
+# BAM_dir <- "03_Processed_data/BAM/"
 BAM_dir <- "/media/robert/Elements/Deep_sequencing_data/24-03-20-MNase-seq/BAM"
 save_dir <- "03_Processed_data/MNase-seq_coverage"
 dir.create(path = save_dir, showWarnings = FALSE)
@@ -36,44 +37,49 @@ for(sample in samples){
   
   # read BAM file -----------------------------------------------------------
   cat("\nReading BAM file...")
-  tmp <- readGAlignmentPairs(file = paste0(BAM_dir, "/", sample, "/", sample, ".bam"), param = ScanBamParam(tag = c("AS", "YS", "NM"), what = "isize"))
-  # AS: alignment score for first mate (max. read length * match bonus [--ma, default: 2])
-  # YS: alignment score for opposite mate
+  tmp <- readGAlignmentPairs(file = paste0(BAM_dir, "/", sample, "/", sample, ".bam"), param = ScanBamParam(tag = c("NM")))
   # NM: edit distance
-  # isize: insert size
-  all_mapped <- length(tmp) / 2  # paired-end reads, for mapping statistics
-  cat(all_mapped, "alignments read.")
+  total_algns <- length(tmp) # for mapping statistics
+  cat(" read", total_algns, "alignment pairs.")
   
-  # Remove alignments with too large insert size ----------------------------
-  cat("\nRemoving alignments with insert size >250 bp...")
-  tmp <- tmp[mcols(first(tmp))$isize <= 250]
-  mapped <- length(tmp) / 2  # paired-end reads
-  cat(" kept ", mapped, " alignments (",  round(100 * mapped / all_mapped, digits = 2), "%).", sep = "")
-
   # plot edit distance distribution -----------------------------------------
   cat("\nPlotting edit distance distribution...")
-  pdf(file = "tmp.pdf", width=2.5, height=2.5)
-  par(cex = 1, mar = c(5.1, 4.1, 4.1, 2.1) - c(1.6, 0.6, 3.6, 2.1), las = 1, tcl = -0.3, mgp = c(2.5, 0.6, 0))
-  # plot fractions of alignments with edit distance = 0, 1, 2, ..., 5, >5
   edit_dist <- c(mcols(first(tmp))$NM, mcols(last(tmp))$NM)
   h <- hist(x = edit_dist, breaks = 0:max(edit_dist), plot = FALSE)  # use hist function to calculate densities (fractions)
-  bp <- barplot(height = c(h$density[1:6], sum(h$density[7:length(h$density)])), ylim = c(0, 1),
-                names.arg = c(as.character(0:5), ">5"), ylab = "Fraction of Alignments", xlab = "Edit Distance")  # plot density values as bar plot
-  # add edit distance <= 3 threshold
-  th <- mean(bp[4:5, ])
-  abline(v = th, col = "red")
-  text(x = 0.95 * th, y = 1, adj = c(1,1), xpd = TRUE, col = "red", labels = paste0(round(x = 100 * ecdf(edit_dist)(3), digits = 2), "%"))
+  # plot fractions of alignments with edit distance = 0, 1, 2, ..., 5, >5
+  pdf(file = "tmp.pdf", width=2.5, height=2.5)
+  par(cex = 1, mar = c(5.1, 4.1, 4.1, 2.1) - c(2.2, 0.9, 3.6, 2.1), las = 1, tcl = -0.3, mgp = c(2.3, 0.5, 0))
+  bp <- barplot(height = c(h$density[1:5], sum(h$density[6:length(h$density)])), ylim = c(0, 1),
+                names.arg = c(as.character(0:4), expression("">="5")), ylab = "Fraction of Alignments", xlab = NA)  # plot density values as bar plot
+  title(xlab = "Edit Distance", line = 2)
+  # add edit distance = 0 percentage
+  text(x = bp[1, 1], y = 0.5, labels = paste0(round(x = 100 * h$density[1], digits = 2), "%"), srt = 90, col = "red")
   dev.off()
   GS_embed_fonts(input = "tmp.pdf", output = paste0(plot_dir_edit, "/", sample, ".pdf"))
-
+  
+  # process alignments ------------------------------------------------------
+  cat("\nConverting to GRanges...")
+  # conversion to GRanges is necessary for trimming
+  # and for coverage calculation considering the complete insert sequence
+  tmp <- GRanges(tmp)
+  
+  # Remove alignments with too large insert size (probably disomes) ---------
+  cat("\nRemoving alignments with insert size >250 bp...")
+  old_length <- length(tmp)
+  tmp <- tmp[width(tmp) <= 250]
+  new_length <- length(tmp)
+  greater_250 <- old_length - new_length
+  cat(" kept ",  round(100 * new_length / old_length, digits = 2), "% of initial alignments.", sep = "")
+  
   # plot insert size distribution -----------------------------------------
   cat("\nPlotting insert size distribution...")
-  pdf(file = "tmp.pdf", width=2.75, height=2.5)
-  par(cex = 1, mar = c(5.1, 4.1, 4.1, 2.1) - c(2, 0.2, 4.1, 1.6), las = 1, tcl = -0.3, mgp = c(2, 0.5, 0))
-  insert_size <- abs(mcols(first(tmp))$isize)
+  insert_size <- width(tmp)
   h <- hist(x = insert_size, breaks = 100, plot = FALSE)  # to calculate ylim of histogram
+  # plot distribution and median
+  pdf(file = "tmp.pdf", width=2.75, height=2.5)
+  par(cex = 1, mar = c(5.1, 4.1, 4.1, 2.1) - c(2.2, 0.2, 4.1, 1.6), las = 1, tcl = -0.3, mgp = c(1.8, 0.5, 0))
   hist(x = insert_size, breaks = 100, xlim = c(50, 250), probability = TRUE,
-       ylim = c(0, 1.2 * max(h$density)), xlab = "Insert size [bp]", ylab = NA, main = NA)
+       ylim = c(0, 1.2 * max(h$density)), xlab = "Insert size (bp)", ylab = NA, main = NA)
   title(ylab = "Probability", line = 3)
   med <- median(insert_size)
   segments(x0 = med, y0 = 0, y1 = 1.1 * max(h$density), col = "red")
@@ -81,35 +87,25 @@ for(sample in samples){
   dev.off()
   GS_embed_fonts(input = "tmp.pdf", output = paste0(plot_dir_insert, "/", sample, ".pdf"))
 
-  # Convert to GRanges ------------------------------------------------------
-  # conversion to GRanges is necessary for trimming (setting start and end is not possible for GAlignmentPairs class)
-  # and for coverage calculation to consider the complete insert sequence
-  cat("\nConverting to GRanges...")
-  tmp <- GRanges(tmp)
-
-  # Adjust to median insert size = 147 bp -----------------------------------
-  cat("\nMedian insert size is ", med , " bp.", sep = "")
-  # trim
-  if(med != 147){
-      cat(" Adjusting to max insert size = 147 bp...")
-      tmp[width(tmp) > 147] <- resize(x = tmp[width(tmp) > 147], width = 147, fix = "center")
-  }
-
+  # Trim to "max_insert" bp (for sharper nucleosome peaks) ------------------
+  max_insert <- 117
+  cat("\nTrimming to max.", max_insert, "bp insert size...")
+  idx <- width(tmp) > max_insert
+  tmp[idx] <- resize(x = tmp[idx], width = max_insert, fix = "center")
+  
   # calculate MNase-seq coverage --------------------------------------------
   cat("\nCalculating coverage...")
   tmp_coverage <- GRanges(coverage(tmp))
-  tmp_coverage$score <- tmp_coverage$score / mapped * 1e6  # convert to RPM
+  tmp_coverage$score <- tmp_coverage$score / length(tmp) * 1e6  # convert to RPM
   assign(x = paste0(dash_to_underscore(sample), "_MNase_seq"), value = tmp_coverage)
-  tmp_trimmed_coverage <- GRanges(coverage(tmp_trimmed))
-  tmp_trimmed_coverage$score <- tmp_trimmed_coverage$score / mapped * 1e6  # convert to RPM
-  assign(x = paste0(dash_to_underscore(sample), "_MNase_seq_trimmed"), value = tmp_trimmed_coverage)
   
   # record mapping statistics data ------------------------------------------
   mapping_stats <- rbind(mapping_stats,
                          data.frame(sample = sample,
-                                    reads_mapped = mapped,
-                                    insert_size_median = med))
-  
+                                    mapped_pairs = total_algns,
+                                    greater250 = greater_250,
+                                    insert_size_median = med,
+                                    alignments_trimmed = sum(idx)))
 }
 
 # save data ---------------------------------------------------------------
@@ -117,10 +113,5 @@ save(list = paste0(dash_to_underscore(samples[grepl(pattern = "LSY4518-13B", x =
 save(list = paste0(dash_to_underscore(samples[grepl(pattern = "LSY5415", x = samples)]), "_MNase_seq"), file = paste0(save_dir, "/LSY5415_MNase-seq.RData"))
 save(list = paste0(dash_to_underscore(samples[grepl(pattern = "LSY5934", x = samples)]), "_MNase_seq"), file = paste0(save_dir, "/LSY5934_MNase-seq.RData"))
 save(list = paste0(dash_to_underscore(samples[grepl(pattern = "LSY5935", x = samples)]), "_MNase_seq"), file = paste0(save_dir, "/LSY5935_MNase-seq.RData"))
-
-save(list = paste0(dash_to_underscore(samples[grepl(pattern = "LSY4518-13B", x = samples)]), "_MNase_seq_trimmed"), file = paste0(save_dir, "/LSY4518-13B_MNase-seq_trimmed.RData"))
-save(list = paste0(dash_to_underscore(samples[grepl(pattern = "LSY5415", x = samples)]), "_MNase_seq_trimmed"), file = paste0(save_dir, "/LSY5415_MNase-seq_trimmed.RData"))
-save(list = paste0(dash_to_underscore(samples[grepl(pattern = "LSY5934", x = samples)]), "_MNase_seq_trimmed"), file = paste0(save_dir, "/LSY5934_MNase-seq_trimmed.RData"))
-save(list = paste0(dash_to_underscore(samples[grepl(pattern = "LSY5935", x = samples)]), "_MNase_seq_trimmed"), file = paste0(save_dir, "/LSY5935_MNase-seq_trimmed.RData"))
 
 write.table(x = mapping_stats, file = paste0(plot_dir_edit, "/Mapping_stats.txt"), row.names = FALSE)
