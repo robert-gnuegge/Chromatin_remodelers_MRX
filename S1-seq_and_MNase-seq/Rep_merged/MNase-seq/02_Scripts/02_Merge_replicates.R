@@ -98,3 +98,45 @@ LSY5415_2h_MNase_seq <- average_GRanges(rep1 = rep1_2, rep2 = rep2_2, verbose = 
 LSY5415_4h_MNase_seq <- average_GRanges(rep1 = rep1_4, rep2 = rep2_4, verbose = TRUE)
 
 save(list = paste0("LSY5415_", c(0, 1, 2, 4), "h_MNase_seq"), file = paste0(out_dir, "LSY5415_MNase-seq.RData"))
+
+
+# LSY5934 -------------------------------------------------------------
+load(file = paste0(rep1_dir, "LSY5934_MNase-seq.RData"))
+rep1_0 <- LSY5934_0h_MNase_seq
+rep1_1 <- LSY5934_1h_MNase_seq
+rep1_2 <- LSY5934_2h_MNase_seq
+rep1_4 <- LSY5934_4h_MNase_seq
+
+load(file = paste0(rep2_dir, "LSY5934_MNase-seq.RData"))
+rep2_0 <- LSY5934_0h_MNase_seq
+rep2_1 <- LSY5934_1h_MNase_seq
+rep2_2 <- LSY5934_2h_MNase_seq
+rep2_4 <- LSY5934_4h_MNase_seq
+
+LSY5934_0h_MNase_seq <- average_GRanges(rep1 = rep1_0, rep2 = rep2_0, verbose = TRUE)
+LSY5934_1h_MNase_seq <- average_GRanges(rep1 = rep1_1, rep2 = rep2_1, verbose = TRUE)
+LSY5934_2h_MNase_seq <- average_GRanges(rep1 = rep1_2, rep2 = rep2_2, verbose = TRUE)
+LSY5934_4h_MNase_seq <- average_GRanges(rep1 = rep1_4, rep2 = rep2_4, verbose = TRUE)
+
+save(list = paste0("LSY5934_", c(0, 1, 2, 4), "h_MNase_seq"), file = paste0(out_dir, "LSY5934_MNase-seq.RData"))
+
+
+# LSY5935 -------------------------------------------------------------
+load(file = paste0(rep1_dir, "LSY5935_MNase-seq.RData"))
+rep1_0 <- LSY5935_0h_MNase_seq
+rep1_1 <- LSY5935_1h_MNase_seq
+rep1_2 <- LSY5935_2h_MNase_seq
+rep1_4 <- LSY5935_4h_MNase_seq
+
+load(file = paste0(rep2_dir, "LSY5935_MNase-seq.RData"))
+rep2_0 <- LSY5935_0h_MNase_seq
+rep2_1 <- LSY5935_1h_MNase_seq
+rep2_2 <- LSY5935_2h_MNase_seq
+rep2_4 <- LSY5935_4h_MNase_seq
+
+LSY5935_0h_MNase_seq <- average_GRanges(rep1 = rep1_0, rep2 = rep2_0, verbose = TRUE)
+LSY5935_1h_MNase_seq <- average_GRanges(rep1 = rep1_1, rep2 = rep2_1, verbose = TRUE)
+LSY5935_2h_MNase_seq <- average_GRanges(rep1 = rep1_2, rep2 = rep2_2, verbose = TRUE)
+LSY5935_4h_MNase_seq <- average_GRanges(rep1 = rep1_4, rep2 = rep2_4, verbose = TRUE)
+
+save(list = paste0("LSY5935_", c(0, 1, 2, 4), "h_MNase_seq"), file = paste0(out_dir, "LSY5935_MNase-seq.RData"))
