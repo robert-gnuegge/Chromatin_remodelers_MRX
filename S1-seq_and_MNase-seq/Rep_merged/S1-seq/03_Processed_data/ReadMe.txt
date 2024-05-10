@@ -1,0 +1,1 @@
+We generally exclude processed data from upload to Github, as they often have a binary format and are hard to be tracked by git. They can be reproduced by obtaining the raw data and running the scripts.
