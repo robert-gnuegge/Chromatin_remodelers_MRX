@@ -1,0 +1,1 @@
+We exclude plots from upload to Github. They can be reproduced by obtaining the raw data and running the scripts.
