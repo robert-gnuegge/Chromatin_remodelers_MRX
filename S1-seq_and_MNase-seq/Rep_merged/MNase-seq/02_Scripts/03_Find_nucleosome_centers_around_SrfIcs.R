@@ -66,7 +66,6 @@ DSBs <- SrfIcs[-c(9, 17)]  # exclude duplicated genome regions
 roi <- DSB_regions(DSBs = DSBs, region_width = 6000)
 
 # process all samples =====================================================
-
 for(strain in c("LSY4518-13B", "LSY5415", "LSY5934", "LSY5935")){
   
   plot_dir <- paste0("04_Plots/Nucleosome_centers/", strain)
@@ -168,9 +167,12 @@ for(strain in c("LSY4518-13B", "LSY5415", "LSY5934", "LSY5935")){
       colnames(mcols(nuc_Gpos)) <- "score"
       
       DT_untrimmed <- DataTrack(range = tmp_untrimmed_roi, type = "polygon", col = NA, fill.mountain = rep("gray", 2), name = "MNase-seq", ylim = c(0, 1))
-      DT_fft <- DataTrack(range = fft_Gpos, type = "l", col = JFly_colors[1], name = "MNase-seq", ylim = c(0, 1))
+      DT_fft <- DataTrack(range = fft_Gpos, type = "l", col = gray(level = 0.33), name = "MNase-seq", ylim = c(0, 1))
       DT_nuc_pos <- DataTrack(range = nuc_Gpos, type = "h", col = "red", name = "MNase-seq", ylim = c(0, 1))
-      OT <- OverlayTrack(trackList = list(DT_untrimmed, DT_fft, DT_nuc_pos))
+      DSB <- DSBs[r]
+      mcols(DSB) <- data.frame(score = 1)
+      DSB <- DataTrack(range = DSB, type = "h", col = "black", ylim = c(0, 1))
+      OT <- OverlayTrack(trackList = list(DT_untrimmed, DT_fft, DT_nuc_pos, DSB))
       
       pdf(file = "tmp.pdf", width = 3, height = 1.5)
         plotTracks(trackList = list(OT), from = start(roi[r]), to = end(roi[r]), chromosome = seqnames(roi[r]), showTitle = FALSE, showAxis = FALSE, margin = 0)
