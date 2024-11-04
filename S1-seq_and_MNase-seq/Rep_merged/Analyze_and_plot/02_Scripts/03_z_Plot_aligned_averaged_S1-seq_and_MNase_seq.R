@@ -13,6 +13,27 @@ source(file = "../../../Src/Misc_helper_functions.R")
 source(file = "../../../Src/Genomic_helper_functions.R")
 source(file = "../../../Src/S_cerevisiae_SrfI_cut_sites.R")
 
+load("../MNase-seq/03_Processed_data/Nucleosome_positions/LSY4518-13B_nucleosome_positions.RData")
+LSY4518_13B_0h_nucleosome_positions
+
+SrfIcs_windows <- DSB_regions(DSBs = SrfIcs, region_width = 10000)
+
+Nuc_distances <- c()
+for(n in 1:length(SrfIcs_windows)){
+  tmp <- subsetByIntersect(subject = LSY4518_13B_0h_nucleosome_positions, query = SrfIcs_windows[n])  
+  Nuc_distances <- c(Nuc_distances, diff(x = start(tmp)))
+}
+
+summary(Nuc_distances)
+length(Nuc_distances)
+
+hist(x = Nuc_distances, breaks = 100)
+
+sum(Nuc_distances < 147) / length(Nuc_distances)
+
+sum(Nuc_distances > 300) / length(Nuc_distances)
+
+
 # function definitions ----------------------------------------------------
 
 # find DSB proximal nucleosome
