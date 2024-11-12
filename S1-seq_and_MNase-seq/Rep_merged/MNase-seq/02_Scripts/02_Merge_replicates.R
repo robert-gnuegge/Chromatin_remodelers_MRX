@@ -49,7 +49,9 @@ average_GRanges <- function(rep1, rep2, verbose = FALSE){
     mcol2 <- mcols(rep2)[names(mcols(rep2)) == mcol_names[n]]
     mcols(out)[names(mcols(out)) == mcol_names[n]] <- apply(X = cbind(mcol1$score, mcol2$score), MARGIN = 1, FUN = mean)
   }
-  cat("\nDone.\n")
+  if(verbose){
+    cat("\nDone.\n")
+  }
   return(out)
 }
 
