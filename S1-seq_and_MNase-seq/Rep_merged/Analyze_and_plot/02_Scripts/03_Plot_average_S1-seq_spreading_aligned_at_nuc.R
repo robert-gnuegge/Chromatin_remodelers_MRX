@@ -2,7 +2,7 @@
 # purpose: align MNase-seq and S1-seq data at DSB-proximal nucleosome, average and plot
 # author: Robert Gnuegge (robert.gnuegge@gmail.com)
 # created: 05/27/24
-# last modified: 05/27/24
+# last modified: 11/15/24
 
 
 # load libraries ----------------------------------------------------------
@@ -16,18 +16,6 @@ source(file = "../../../Src/S_cerevisiae_SrfI_cut_sites.R")
 
 
 # function definitions ----------------------------------------------------
-
-process_S1_seq <- function(GRanges, roi){
-  tmp <- subsetByIntersect(subject = GRanges, query = roi)  # only keep S1-seq coverage in DSB regions
-  # tmp <- sort(as_nt_resolved_GRanges(tmp), ignore.strand = TRUE)  # nt resolution, and sort
-  return(tmp)
-}
-
-process_MNase_seq <- function(GRanges, roi){
-  tmp <- subsetByIntersect(subject = GRanges, query = roi)  # only keep MNase-seq coverage in DSB regions
-  tmp <- as_nt_resolved_GRanges(tmp)  # nt resolution
-  return(tmp)
-}
 
 add_nuc_numbers_and_strand <- function(DSBs, nuc_centers, ideal_nuc_centers){
   tmp <- nuc_centers
@@ -46,18 +34,25 @@ add_nuc_numbers_and_strand <- function(DSBs, nuc_centers, ideal_nuc_centers){
   return(tmp)
 }
 
-add_distance_to_nucleosome <- function(GRanges, nuc_centers, roi, nuc, nuc_dist = 165){
+add_distance_to_DSB_prox_nuc <- function(seq_data, nuc_pos){
   out <- GRanges()
   for(n in 1:length(roi)){
-    nuc_region <- subsetByOverlaps(x = nuc_centers, ranges = roi[n])
-    nuc_pos <- nuc_region[which.min(abs(nuc_region$nuc_number) - nuc)]
-    tmp <- subsetByOverlaps(x = GRanges, ranges = roi[n])
-    if(unique(strand(tmp)) == "-"){
-      tmp$dist_from_nuc <- start(nuc_pos) - start(tmp) + (abs(nuc_pos$nuc_number) - nuc) * nuc_dist
-    }else{
-      tmp$dist_from_nuc <- start(tmp) - start(nuc_pos) + (nuc_pos$nuc_number - nuc) * nuc_dist
+    nuc_pos_roi <- subsetByOverlaps(x = nuc_pos, ranges = roi[n])
+    algnmt_nuc <- nuc_pos_roi[which.min(abs(nuc_pos_roi$idx) - algnmt_nuc_idx)]
+    # take next nucleosome in case no algnment_nuc_idx was identified
+    if(length(algnmt_nuc) > 1){
+      # use mean of coordinates in case several nucleosomes have the chosen idx
+      tmp <- round(mean(start(algnmt_nuc)))
+      algnmt_nuc <- algnmt_nuc[1]
+      start(algnmt_nuc) <- tmp
     }
-    tmp$nuc_number <- nuc_pos$nuc_number 
+    tmp <- subsetByOverlaps(x = GRanges, ranges = roi[n])
+    if(strand(algnmt_nuc) == "-"){
+      tmp$dist_from_nuc <- start(algnmt_nuc) - start(tmp) + (abs(algnmt_nuc$idx) - algnmt_nuc_idx) * nuc_dist
+    }else{
+      tmp$dist_from_nuc <- start(tmp) - start(algnmt_nuc) + (algnmt_nuc$idx - algnmt_nuc_idx) * nuc_dist
+    }
+    tmp$algnmt_nuc <- nuc_pos$algnmt_nuc 
     out <- c(out, tmp)
   }
   return(out)
@@ -91,56 +86,34 @@ dir.create(path = plot_dir, showWarnings = FALSE)
 
 # LSY4518-13B =============================================================
 
-# load and process S1-seq data --------------------------------------------
+# load and process data ---------------------------------------------------
 DSBs <- SrfIcs[-c(9, 17)]  # exclude SrfIcs in duplicated regions
-roi <- DSB_regions(DSBs = DSBs, region_width = 6000, up_rev_down_fw = TRUE)  # keep only regions with correct orientation w.r.t DSBs
+roi <- DSB_regions(DSBs = DSBs, region_width = 4000, up_rev_down_fw = TRUE)
 
 load(file = "../../Rep_merged/S1-seq/03_Processed_data/S1-seq_coverage/LSY4518-13B_S1-seq.RData")
-LSY4518_13B_0h_S1_seq <- process_S1_seq(GRanges = LSY4518_13B_0h_S1_seq, roi = roi)
-LSY4518_13B_1h_S1_seq <- process_S1_seq(GRanges = LSY4518_13B_1h_S1_seq, roi = roi)
-LSY4518_13B_2h_S1_seq <- process_S1_seq(GRanges = LSY4518_13B_2h_S1_seq, roi = roi)
-LSY4518_13B_4h_S1_seq <- process_S1_seq(GRanges = LSY4518_13B_4h_S1_seq, roi = roi)
+LSY4518_13B_0h_S1_seq <- subsetByIntersect(subject = LSY4518_13B_0h_S1_seq, query = roi)
+LSY4518_13B_1h_S1_seq <- subsetByIntersect(subject = LSY4518_13B_1h_S1_seq, query = roi)
+LSY4518_13B_2h_S1_seq <- subsetByIntersect(subject = LSY4518_13B_2h_S1_seq, query = roi)
+LSY4518_13B_4h_S1_seq <- subsetByIntersect(subject = LSY4518_13B_4h_S1_seq, query = roi)
 
-
-# load and process MNase-seq data -----------------------------------------
 load(file = "../../Rep_merged/MNase-seq/03_Processed_data/MNase-seq_coverage/LSY4518-13B_MNase-seq.RData")
-LSY4518_13B_0h_MNase_seq <- process_MNase_seq(GRanges = LSY4518_13B_0h_MNase_seq, roi = roi)
-LSY4518_13B_1h_MNase_seq <- process_MNase_seq(GRanges = LSY4518_13B_1h_MNase_seq, roi = roi)
-LSY4518_13B_2h_MNase_seq <- process_MNase_seq(GRanges = LSY4518_13B_2h_MNase_seq, roi = roi)
-LSY4518_13B_4h_MNase_seq <- process_MNase_seq(GRanges = LSY4518_13B_4h_MNase_seq, roi = roi)
+LSY4518_13B_0h_MNase_seq <- subsetByIntersect(subject = LSY4518_13B_0h_MNase_seq, query = roi)
+LSY4518_13B_1h_MNase_seq <- subsetByIntersect(subject = LSY4518_13B_1h_MNase_seq, query = roi)
+LSY4518_13B_2h_MNase_seq <- subsetByIntersect(subject = LSY4518_13B_2h_MNase_seq, query = roi)
+LSY4518_13B_4h_MNase_seq <- subsetByIntersect(subject = LSY4518_13B_4h_MNase_seq, query = roi)
 
-
-# process nucleosome center data ------------------------------------------
-
-# load nucleosome position data 
 load(file = "../../Rep_merged/MNase-seq/03_Processed_data/Nucleosome_positions/LSY4518-13B_nucleosome_positions.RData")
+LSY4518_13B_0h_nucleosome_positions <- subsetByIntersect(subject = LSY4518_13B_0h_nucleosome_positions, query = roi)
+LSY4518_13B_1h_nucleosome_positions <- subsetByIntersect(subject = LSY4518_13B_1h_nucleosome_positions, query = roi)
+LSY4518_13B_2h_nucleosome_positions <- subsetByIntersect(subject = LSY4518_13B_2h_nucleosome_positions, query = roi)
+LSY4518_13B_4h_nucleosome_positions <- subsetByIntersect(subject = LSY4518_13B_4h_nucleosome_positions, query = roi)
 
-# nucleosome properties (according to Jansen et al., 2011; pmid: 21646431)
-nuc_width <- 147
-nuc_dist <- 165  # nuc_width + 18 (average linker length)
+LSY4518_13B_0h_nucleosome_positions[abs(LSY4518_13B_0h_nucleosome_positions$idx) == 1][1:10]
+LSY4518_13B_0h_nucleosome_positions[abs(LSY4518_13B_0h_nucleosome_positions$idx) == 1][11:20]
+LSY4518_13B_0h_nucleosome_positions[abs(LSY4518_13B_0h_nucleosome_positions$idx) == 1][21:30]
+LSY4518_13B_0h_nucleosome_positions[abs(LSY4518_13B_0h_nucleosome_positions$idx) == 1][31:38]
 
-# define ideal nucleosome positions relative to DSBs
-ideal_nuc_centers <- GRanges()
-for(n in 0:19){
-  tmp <- shift(x = DSBs, shift = -round((n + 0.5) * nuc_dist))
-  tmp$nuc_number <- -(n + 1)
-  ideal_nuc_centers <- c(ideal_nuc_centers, tmp)
-  tmp <- shift(x = DSBs, shift = round((n + 0.5) * nuc_dist))
-  tmp$nuc_number <- (n + 1)
-  ideal_nuc_centers <- c(ideal_nuc_centers, tmp)
-}
-ideal_nuc_centers <- sort(ideal_nuc_centers)
-strand(ideal_nuc_centers) <- ifelse(test = ideal_nuc_centers$nuc_number < 0, yes = "-", no = "+")
-
-# add nucleosome numbers and strand information to Nuc_centers GRanges  
-LSY4518_13B_0h_nucleosome_positions <- add_nuc_numbers_and_strand(DSBs = DSBs, nuc_centers = LSY4518_13B_0h_nucleosome_positions, ideal_nuc_centers = ideal_nuc_centers)
-LSY4518_13B_1h_nucleosome_positions <- add_nuc_numbers_and_strand(DSBs = DSBs, nuc_centers = LSY4518_13B_1h_nucleosome_positions, ideal_nuc_centers = ideal_nuc_centers)
-LSY4518_13B_2h_nucleosome_positions <- add_nuc_numbers_and_strand(DSBs = DSBs, nuc_centers = LSY4518_13B_2h_nucleosome_positions, ideal_nuc_centers = ideal_nuc_centers)
-LSY4518_13B_4h_nucleosome_positions <- add_nuc_numbers_and_strand(DSBs = DSBs, nuc_centers = LSY4518_13B_4h_nucleosome_positions, ideal_nuc_centers = ideal_nuc_centers)
-
-# calc distance from DSB-proximal nucleosome for sequencing data sets ------
-DSBs <- SrfIcs[-c(9, 17)]
-roi <- DSB_regions(DSBs = DSBs, region_width = 6000, up_rev_down_fw = TRUE)
+# add distance to DSB-proximal nucleosome ---------------------------------
 
 # t = 0
 nuc <- 1

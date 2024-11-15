@@ -2,7 +2,7 @@
 # purpose: identify nucleosome positions next to DSBs
 # author: Robert Gnuegge (robert.gnuegge@gmail.com)
 # created: 05/26/24
-# last modified: 11/11/24
+# last modified: 11/15/24
 
 # Comment: For nucleosome peak identification, we need to artificially shorten the 
 # alignments more aggressively (for sharper peaks). Therefore, we cannot use the merged 
@@ -163,8 +163,8 @@ for(strain in c("LSY4518-13B", "LSY5415", "LSY5934", "LSY5935")){
   dir.create(path = plot_dir, showWarnings = FALSE, recursive = TRUE)
   
   for(r in 1:length(roi)){
-    
-    cat("\n\nIdentifying nucleosome positions at", as.character(SrfIcs[r]), "...")
+  
+    cat("\n\nIdentifying nucleosome positions at", as.character(DSBs[r]), "...")
     
     # start PDF device for plotting all time points
     pdf(file = "tmp.pdf", width=3, height=5)
@@ -176,8 +176,8 @@ for(strain in c("LSY4518-13B", "LSY5415", "LSY5934", "LSY5935")){
       
       # find MNase-seq coverage peaks
       coverage_40_roi <- subsetByIntersect(subject = get(paste0("coverage_40_", t, "h")), query = roi[r])
-      fft <- filterFFT(data = coverage_40_roi$score, pcKeepComp = 0.01)  # filter noise
-      idx <- peakDetection(fft, threshold="25%", score=FALSE, min.cov = 0.1)
+      fft <- filterFFT(data = coverage_40_roi$score, pcKeepComp = 0.009)  # filter noise
+      idx <- peakDetection(fft, threshold="10%", score=FALSE, min.cov = 0.1)
       peaks <- granges(coverage_40_roi)[idx]
       
       if(t == 0){
@@ -195,7 +195,11 @@ for(strain in c("LSY4518-13B", "LSY5415", "LSY5934", "LSY5935")){
         if(DSB_prox_nuc_dist > 37){
           # if distance of DSB-proximal nucleosome to DSB is > 37 bp (cut at > 1/4 nucleosome width)
           # nucleosomes are labeled ..., -2, -1, 1, 2, ...
-          ideal_nucs$idx <- c(-11:-1, 1:10)
+          if(start(DSB_prox_nuc) < start(DSBs[r])){
+            ideal_nucs$idx <- c(-11:-1, 1:10)
+          }else{
+            ideal_nucs$idx <- c(-10:-1, 1:11)
+          }
         } else {
           # if distance is smaller (DSB within nucleosome)
           # nucleosomes are labeled ..., -2, -1, 0, 1, 2, ...
@@ -208,7 +212,7 @@ for(strain in c("LSY4518-13B", "LSY5415", "LSY5934", "LSY5935")){
         # optimal shift to minimize the distance to the "real nucleosomes".
         optimal_shift <- 0
         lowest_summed_dist <- 10000
-        for(nt_shift in (-41:41)){
+        for(nt_shift in (-10:10)){
           shifted_ideal_nucs <- shift(x = ideal_nucs, shift = nt_shift)
           tmp_hits <- distanceToNearest(x = peaks, subject = shifted_ideal_nucs)
           summed_dist <- sum(mcols(tmp_hits)$distance)
@@ -245,7 +249,7 @@ for(strain in c("LSY4518-13B", "LSY5415", "LSY5934", "LSY5935")){
     }
     
     dev.off()  # close plotting device
-    file_name = paste0(plot_dir, "/", sub(pattern = ":", replacement = "_", x = as.character(SrfIcs[r])), ".pdf")
+    file_name = paste0(plot_dir, "/", sub(pattern = ":", replacement = "_", x = as.character(DSBs[r])), ".pdf")
     GS_embed_fonts(input = "tmp.pdf", output = file_name)  # embed fonts into plot
     par(mfrow = c(1, 1))  # reset mfrow plotting parameter
 
@@ -257,7 +261,7 @@ for(strain in c("LSY4518-13B", "LSY5415", "LSY5934", "LSY5935")){
   assign(x = paste0(dash_to_underscore(strain), "_1h_nucleosome_positions"), value = nuc_pos_1h)
   assign(x = paste0(dash_to_underscore(strain), "_2h_nucleosome_positions"), value = nuc_pos_2h)
   assign(x = paste0(dash_to_underscore(strain), "_4h_nucleosome_positions"), value = nuc_pos_4h)
-  save(list = paste0(dash_to_underscore(strain), "_", c(0, 1, 2, 4), "h_nucleosome_positions"), 
+  save(list = paste0(dash_to_underscore(strain), "_", c(0, 1, 2, 4), "h_nucleosome_positions"),
        file = paste0(save_dir, "/", strain, "_nucleosome_positions.RData"))
-  
+
 }
