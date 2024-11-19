@@ -66,11 +66,11 @@ add_distance_to_nuc <- function(seq_data, nuc_pos, nuc = 1, nuc_dist = 165){
 # arguments: dataframes with columns "dist_to_nuc" and "score", numeric, colors
 # result: plot
 plotting_function <- function(MNase_seq_0, MNase_seq_1, MNase_seq_2, MNase_seq_4,
-                              S1_seq_1, S1_seq_2, S1_seq_4,
+                              S1_seq_1 = NULL, S1_seq_2 = NULL, S1_seq_4 = NULL,
                               xlim = NULL, ylim_MNase = NULL, ylim_S1 = NULL,
                               MNase_seq_cols = gray(level = 9:6 * 0.1),
                               S1_seq_cols = JFly_colors[c(1, 4, 5)],
-                              nuc_marks = 1:6, nuc_dist = 165, nuc_mark_col = gray(level = 0.4)){
+                              nuc_marks = NULL, nuc_dist = 165, nuc_mark_col = gray(level = 0.4)){
   
   # function to plot MNase-seq data (as polygon)
   plot_MNase_seq <- function(data, col){
@@ -107,29 +107,33 @@ plotting_function <- function(MNase_seq_0, MNase_seq_1, MNase_seq_2, MNase_seq_4
   plot_MNase_seq(data = MNase_seq_2, col = MNase_seq_cols[3])
   plot_MNase_seq(data = MNase_seq_4, col = MNase_seq_cols[4])
   
-  # add nucleosome marks
-  segments(x0 = (nuc_marks - 1) * nuc_dist, y0 = ylim_MNase[1], 
-           x1 = (nuc_marks - 1) * nuc_dist, y1 = ylim_MNase[2], 
-           col = nuc_mark_col, lty = "dashed")
-  
-  # add S1-seq data as new plot
-  par(new = TRUE)
-  
-  # calculate axis ranges if necessary
-  if(is.null(ylim_S1)){
-    ylim_S1 <- range(c(0, S1_seq_1$score[S1_seq_1$dist_to_nuc >= xlim[1] & S1_seq_1$dist_to_nuc <= xlim[2]], 
-                       S1_seq_2$score[S1_seq_2$dist_to_nuc >= xlim[1] & S1_seq_2$dist_to_nuc <= xlim[2]], 
-                       S1_seq_4$score[S1_seq_4$dist_to_nuc >= xlim[1] & S1_seq_4$dist_to_nuc <= xlim[2]]))
-    cat("\nCalculated ylim_S1 = (", ylim_S1[1], ", ", ylim_S1[2], ")", sep = "")
+  if(!is.null(nuc_marks)){
+    # add nucleosome marks
+    segments(x0 = (nuc_marks - 1) * nuc_dist, y0 = ylim_MNase[1], 
+             x1 = (nuc_marks - 1) * nuc_dist, y1 = ylim_MNase[2], 
+             col = nuc_mark_col, lty = "dashed")
   }
   
-  # start empty plot
-  plot(x = NA, y = NA, xlim = xlim, ylim = ylim_S1, axes = FALSE, ann = FALSE)
-  
-  # add MNase-seq data
-  plot_S1_seq(data = S1_seq_1, col = S1_seq_cols[1])
-  plot_S1_seq(data = S1_seq_2, col = S1_seq_cols[2])
-  plot_S1_seq(data = S1_seq_4, col = S1_seq_cols[3])
+  if(!is.null(S1_seq_1) | !is.null(S1_seq_2) | !is.null(S1_seq_4)){
+    # add S1-seq data as new plot
+    par(new = TRUE)
+    
+    # calculate axis ranges if necessary
+    if(is.null(ylim_S1)){
+      ylim_S1 <- range(c(0, S1_seq_1$score[S1_seq_1$dist_to_nuc >= xlim[1] & S1_seq_1$dist_to_nuc <= xlim[2]], 
+                         S1_seq_2$score[S1_seq_2$dist_to_nuc >= xlim[1] & S1_seq_2$dist_to_nuc <= xlim[2]], 
+                         S1_seq_4$score[S1_seq_4$dist_to_nuc >= xlim[1] & S1_seq_4$dist_to_nuc <= xlim[2]]))
+      cat("\nCalculated ylim_S1 = (", ylim_S1[1], ", ", ylim_S1[2], ")", sep = "")
+    }
+    
+    # start empty plot
+    plot(x = NA, y = NA, xlim = xlim, ylim = ylim_S1, axes = FALSE, ann = FALSE)
+    
+    # add MNase-seq data
+    if(!is.null(S1_seq_1)){plot_S1_seq(data = S1_seq_1, col = S1_seq_cols[1])}
+    if(!is.null(S1_seq_2)){plot_S1_seq(data = S1_seq_2, col = S1_seq_cols[2])}
+    if(!is.null(S1_seq_4)){plot_S1_seq(data = S1_seq_4, col = S1_seq_cols[3])}
+  }
   
 }
 
@@ -300,125 +304,66 @@ dev.off()
 GS_embed_fonts(input = "tmp.pdf", output = paste0(plot_dir, "/LSY5415.pdf"))
 
 
-
-
-
-
-
-
 # LSY5935 =============================================================
 
-# load and process MNase-seq data -----------------------------------------
+# load and process data ---------------------------------------------------
 DSBs <- SrfIcs[-c(9, 17)]  # exclude SrfIcs in duplicated regions
-roi <- DSB_regions(DSBs = DSBs, region_width = 6000, up_rev_down_fw = TRUE)  # keep only regions with correct orientation w.r.t DSBs
+roi <- DSB_regions(DSBs = DSBs, region_width = 4000, up_rev_down_fw = TRUE)
 
 load(file = "../../Rep_merged/MNase-seq/03_Processed_data/MNase-seq_coverage/LSY5935_MNase-seq.RData")
-LSY5935_0h_MNase_seq <- process_MNase_seq(GRanges = LSY5935_0h_MNase_seq, roi = roi)
-LSY5935_1h_MNase_seq <- process_MNase_seq(GRanges = LSY5935_1h_MNase_seq, roi = roi)
-LSY5935_2h_MNase_seq <- process_MNase_seq(GRanges = LSY5935_2h_MNase_seq, roi = roi)
-LSY5935_4h_MNase_seq <- process_MNase_seq(GRanges = LSY5935_4h_MNase_seq, roi = roi)
+LSY5935_0h_MNase_seq <- subsetByIntersect(subject = LSY5935_0h_MNase_seq, query = roi)
+LSY5935_1h_MNase_seq <- subsetByIntersect(subject = LSY5935_1h_MNase_seq, query = roi)
+LSY5935_2h_MNase_seq <- subsetByIntersect(subject = LSY5935_2h_MNase_seq, query = roi)
+LSY5935_4h_MNase_seq <- subsetByIntersect(subject = LSY5935_4h_MNase_seq, query = roi)
 
-
-# process nucleosome center data ------------------------------------------
-
-# load nucleosome position data 
 load(file = "../../Rep_merged/MNase-seq/03_Processed_data/Nucleosome_positions/LSY5935_nucleosome_positions.RData")
+LSY5935_0h_nucleosome_positions <- subsetByIntersect(subject = LSY5935_0h_nucleosome_positions, query = roi)
+LSY5935_1h_nucleosome_positions <- subsetByIntersect(subject = LSY5935_1h_nucleosome_positions, query = roi)
+LSY5935_2h_nucleosome_positions <- subsetByIntersect(subject = LSY5935_2h_nucleosome_positions, query = roi)
+LSY5935_4h_nucleosome_positions <- subsetByIntersect(subject = LSY5935_4h_nucleosome_positions, query = roi)
 
-# nucleosome properties (according to Jansen et al., 2011; pmid: 21646431)
-nuc_width <- 147
-nuc_dist <- 165  # nuc_width + 18 (average linker length)
 
-# define ideal nucleosome positions relative to DSBs
-ideal_nuc_centers <- GRanges()
-for(n in 0:19){
-  tmp <- shift(x = DSBs, shift = -round((n + 0.5) * nuc_dist))
-  tmp$nuc_number <- -(n + 1)
-  ideal_nuc_centers <- c(ideal_nuc_centers, tmp)
-  tmp <- shift(x = DSBs, shift = round((n + 0.5) * nuc_dist))
-  tmp$nuc_number <- (n + 1)
-  ideal_nuc_centers <- c(ideal_nuc_centers, tmp)
+# add distance to DSB-proximal nucleosome ---------------------------------
+
+# helper function (using the same nuc_pos object [t=0] for all seq_data objects)
+add_distance_to_nuc_helper <- function(object_name){
+  tmp <- GRanges()
+  for(r in 1:length(roi)){
+    seq_data <- subsetByIntersect(subject = get(object_name), query = roi[r])
+    nuc_pos <- subsetByIntersect(subject = LSY5935_0h_nucleosome_positions, query = roi[r])
+    tmp <- c(tmp, add_distance_to_nuc(seq_data = seq_data, nuc_pos = nuc_pos, nuc = 1))
+  }
+  assign(x = object_name, value = tmp, envir = .GlobalEnv)
 }
-ideal_nuc_centers <- sort(ideal_nuc_centers)
-strand(ideal_nuc_centers) <- ifelse(test = ideal_nuc_centers$nuc_number < 0, yes = "-", no = "+")
 
-# add nucleosome numbers and strand information to Nuc_centers GRanges  
-LSY5935_0h_nucleosome_positions <- add_nuc_numbers_and_strand(DSBs = DSBs, nuc_centers = LSY5935_0h_nucleosome_positions, ideal_nuc_centers = ideal_nuc_centers)
-LSY5935_1h_nucleosome_positions <- add_nuc_numbers_and_strand(DSBs = DSBs, nuc_centers = LSY5935_1h_nucleosome_positions, ideal_nuc_centers = ideal_nuc_centers)
-LSY5935_2h_nucleosome_positions <- add_nuc_numbers_and_strand(DSBs = DSBs, nuc_centers = LSY5935_2h_nucleosome_positions, ideal_nuc_centers = ideal_nuc_centers)
-LSY5935_4h_nucleosome_positions <- add_nuc_numbers_and_strand(DSBs = DSBs, nuc_centers = LSY5935_4h_nucleosome_positions, ideal_nuc_centers = ideal_nuc_centers)
+add_distance_to_nuc_helper(object_name = "LSY5935_0h_MNase_seq")
+add_distance_to_nuc_helper(object_name = "LSY5935_1h_MNase_seq")
+add_distance_to_nuc_helper(object_name = "LSY5935_2h_MNase_seq")
+add_distance_to_nuc_helper(object_name = "LSY5935_4h_MNase_seq")
 
-# calc distance from DSB-proximal nucleosome for sequencing data sets ------
-DSBs <- SrfIcs[-c(9, 17)]
-roi <- DSB_regions(DSBs = DSBs, region_width = 6000, up_rev_down_fw = TRUE)
 
-# t = 0
-nuc <- 1
-MNase <- add_distance_to_nucleosome(GRanges = LSY5935_0h_MNase_seq, nuc_centers = LSY5935_0h_nucleosome_positions, roi = roi, nuc = nuc)
-idx <- MNase$dist_to_nuc > -(nuc - 0.5) * nuc_dist  # & S1$dist_to_nuc <= 1200
-MNase_agg_0 <- aggregate(score ~ dist_to_nuc, data = MNase[idx], FUN = mean)
+# average and smoothen ----------------------------------------------------
+k <- 51
 
-# t = 1
-nuc <- 2
-MNase <- add_distance_to_nucleosome(GRanges = LSY5935_1h_MNase_seq, nuc_centers = LSY5935_1h_nucleosome_positions, roi = roi, nuc = nuc)
-idx <- MNase$dist_to_nuc > -(nuc - 0.5) * nuc_dist  # & S1$dist_to_nuc <= 1200
-MNase_agg_1 <- aggregate(score ~ dist_to_nuc, data = MNase[idx], FUN = mean)
-
-# t = 2
-nuc <- 3
-MNase <- add_distance_to_nucleosome(GRanges = LSY5935_2h_MNase_seq, nuc_centers = LSY5935_2h_nucleosome_positions, roi = roi, nuc = nuc)
-idx <- MNase$dist_to_nuc > -(nuc - 0.5) * nuc_dist  # & S1$dist_to_nuc <= 1200
-MNase_agg_2 <- aggregate(score ~ dist_to_nuc, data = MNase[idx], FUN = mean)
-
-# t = 4
-nuc <- 4
-MNase <- add_distance_to_nucleosome(GRanges = LSY5935_4h_MNase_seq, nuc_centers = LSY5935_4h_nucleosome_positions, roi = roi, nuc = nuc)
-idx <- MNase$dist_to_nuc > -(nuc - 0.5) * nuc_dist  # & S1$dist_to_nuc <= 1200
-MNase_agg_4 <- aggregate(score ~ dist_to_nuc, data = MNase[idx], FUN = mean)
+# MNase-seq data
+for(t in c(0, 1, 2, 4)){
+  tmp <- aggregate(score ~ dist_to_nuc, 
+                   data = get(paste0("LSY5935_", t, "h_MNase_seq")), FUN = mean)
+  tmp$score <- runmed(x = tmp$score, k = k)
+  assign(x = paste0("MNase_seq_", t), value = tmp)
+}
 
 
 # plotting ----------------------------------------------------------------
-k <- 51
-
-# dirs --------------------------------------------------------------------
 plot_dir <- "04_Plots/mre11-nd/Avgs_algned_at_DSB_prxml_nuc"
 dir.create(path = plot_dir, showWarnings = FALSE)
+
 
 pdf(file = "tmp.pdf", width=3, height=2.5)
 par(cex = 1, mar = rep(0,4), oma = rep(0, 4))
 
-# start empty plot
-plot(x = NA, y = NA, xlim = c(-80, 1100), ylim = c(0, 11), 
-     axes = FALSE, ann = FALSE)
-
-# plot MNase-seq
-MNase_seq <- MNase_agg_0
-MNase_seq <- MNase_seq[MNase_seq$dist_to_nuc < 1100, ]
-y <- moving_average(x = MNase_seq$score, k = k, keep = 0)
-polygon(x = c(MNase_seq$dist_to_nuc[1], MNase_seq$dist_to_nuc, MNase_seq$dist_to_nuc[length(MNase_seq$dist_to_nuc)]), 
-        y = c(0, y, 0), col = gray(level = 0.9), border = NA)
-
-MNase_seq <- MNase_agg_1
-MNase_seq <- MNase_seq[MNase_seq$dist_to_nuc < 1100 - nuc_dist, ]
-y <- moving_average(x = MNase_seq$score, k = k, keep = 0)
-polygon(x = c(MNase_seq$dist_to_nuc[1], MNase_seq$dist_to_nuc, MNase_seq$dist_to_nuc[length(MNase_seq$dist_to_nuc)]) + nuc_dist, 
-        y = c(0, y, 0), col = gray(level = 0.8), border = NA)
-
-MNase_seq <- MNase_agg_2
-MNase_seq <- MNase_seq[MNase_seq$dist_to_nuc < 1100 - 2 * nuc_dist, ]
-y <- moving_average(x = MNase_seq$score, k = k, keep = 0)
-polygon(x = c(MNase_seq$dist_to_nuc[1], MNase_seq$dist_to_nuc, MNase_seq$dist_to_nuc[length(MNase_seq$dist_to_nuc)]) + 2 * nuc_dist, 
-        y = c(0, y, 0), col = gray(level = 0.7), border = NA)
-
-MNase_seq <- MNase_agg_4
-MNase_seq <- MNase_seq[MNase_seq$dist_to_nuc < 1100 - 3 * nuc_dist, ]
-y <- moving_average(x = MNase_seq$score, k = k, keep = 0)
-polygon(x = c(MNase_seq$dist_to_nuc[1], MNase_seq$dist_to_nuc, MNase_seq$dist_to_nuc[length(MNase_seq$dist_to_nuc)]) + 3 * nuc_dist, 
-        y = c(0, y, 0), col = gray(level = 0.6), border = NA)
-
-# add nucleosome marks
-x <- 1:6
-nuc <- 1
-segments(x0 = (x - nuc) * nuc_dist, y0 = 11, x1 = (x - nuc) * nuc_dist, y1 = 0, col = gray(level = 0.4), lty = "dashed")
+plotting_function(MNase_seq_0 = MNase_seq_0, MNase_seq_1 = MNase_seq_1, MNase_seq_2 = MNase_seq_2, MNase_seq_4 = MNase_seq_4,
+                  xlim = c(-165, 990))  # , nuc_marks = 1:6  
 
 dev.off()
 GS_embed_fonts(input = "tmp.pdf", output = paste0(plot_dir, "/LSY5935.pdf"))
@@ -426,117 +371,64 @@ GS_embed_fonts(input = "tmp.pdf", output = paste0(plot_dir, "/LSY5935.pdf"))
 
 # LSY5934 =============================================================
 
-# load and process MNase-seq data -----------------------------------------
+# load and process data ---------------------------------------------------
 DSBs <- SrfIcs[-c(9, 17)]  # exclude SrfIcs in duplicated regions
-roi <- DSB_regions(DSBs = DSBs, region_width = 6000, up_rev_down_fw = TRUE)  # keep only regions with correct orientation w.r.t DSBs
+roi <- DSB_regions(DSBs = DSBs, region_width = 4000, up_rev_down_fw = TRUE)
 
 load(file = "../../Rep_merged/MNase-seq/03_Processed_data/MNase-seq_coverage/LSY5934_MNase-seq.RData")
-LSY5934_0h_MNase_seq <- process_MNase_seq(GRanges = LSY5934_0h_MNase_seq, roi = roi)
-LSY5934_1h_MNase_seq <- process_MNase_seq(GRanges = LSY5934_1h_MNase_seq, roi = roi)
-LSY5934_2h_MNase_seq <- process_MNase_seq(GRanges = LSY5934_2h_MNase_seq, roi = roi)
-LSY5934_4h_MNase_seq <- process_MNase_seq(GRanges = LSY5934_4h_MNase_seq, roi = roi)
+LSY5934_0h_MNase_seq <- subsetByIntersect(subject = LSY5934_0h_MNase_seq, query = roi)
+LSY5934_1h_MNase_seq <- subsetByIntersect(subject = LSY5934_1h_MNase_seq, query = roi)
+LSY5934_2h_MNase_seq <- subsetByIntersect(subject = LSY5934_2h_MNase_seq, query = roi)
+LSY5934_4h_MNase_seq <- subsetByIntersect(subject = LSY5934_4h_MNase_seq, query = roi)
 
-
-# process nucleosome center data ------------------------------------------
-
-# load nucleosome position data 
 load(file = "../../Rep_merged/MNase-seq/03_Processed_data/Nucleosome_positions/LSY5934_nucleosome_positions.RData")
+LSY5934_0h_nucleosome_positions <- subsetByIntersect(subject = LSY5934_0h_nucleosome_positions, query = roi)
+LSY5934_1h_nucleosome_positions <- subsetByIntersect(subject = LSY5934_1h_nucleosome_positions, query = roi)
+LSY5934_2h_nucleosome_positions <- subsetByIntersect(subject = LSY5934_2h_nucleosome_positions, query = roi)
+LSY5934_4h_nucleosome_positions <- subsetByIntersect(subject = LSY5934_4h_nucleosome_positions, query = roi)
 
-# nucleosome properties (according to Jansen et al., 2011; pmid: 21646431)
-nuc_width <- 147
-nuc_dist <- 165  # nuc_width + 18 (average linker length)
 
-# define ideal nucleosome positions relative to DSBs
-ideal_nuc_centers <- GRanges()
-for(n in 0:19){
-  tmp <- shift(x = DSBs, shift = -round((n + 0.5) * nuc_dist))
-  tmp$nuc_number <- -(n + 1)
-  ideal_nuc_centers <- c(ideal_nuc_centers, tmp)
-  tmp <- shift(x = DSBs, shift = round((n + 0.5) * nuc_dist))
-  tmp$nuc_number <- (n + 1)
-  ideal_nuc_centers <- c(ideal_nuc_centers, tmp)
+# add distance to DSB-proximal nucleosome ---------------------------------
+
+# helper function (using the same nuc_pos object [t=0] for all seq_data objects)
+add_distance_to_nuc_helper <- function(object_name){
+  tmp <- GRanges()
+  for(r in 1:length(roi)){
+    seq_data <- subsetByIntersect(subject = get(object_name), query = roi[r])
+    nuc_pos <- subsetByIntersect(subject = LSY5934_0h_nucleosome_positions, query = roi[r])
+    tmp <- c(tmp, add_distance_to_nuc(seq_data = seq_data, nuc_pos = nuc_pos, nuc = 1))
+  }
+  assign(x = object_name, value = tmp, envir = .GlobalEnv)
 }
-ideal_nuc_centers <- sort(ideal_nuc_centers)
-strand(ideal_nuc_centers) <- ifelse(test = ideal_nuc_centers$nuc_number < 0, yes = "-", no = "+")
 
-# add nucleosome numbers and strand information to Nuc_centers GRanges  
-LSY5934_0h_nucleosome_positions <- add_nuc_numbers_and_strand(DSBs = DSBs, nuc_centers = LSY5934_0h_nucleosome_positions, ideal_nuc_centers = ideal_nuc_centers)
-LSY5934_1h_nucleosome_positions <- add_nuc_numbers_and_strand(DSBs = DSBs, nuc_centers = LSY5934_1h_nucleosome_positions, ideal_nuc_centers = ideal_nuc_centers)
-LSY5934_2h_nucleosome_positions <- add_nuc_numbers_and_strand(DSBs = DSBs, nuc_centers = LSY5934_2h_nucleosome_positions, ideal_nuc_centers = ideal_nuc_centers)
-LSY5934_4h_nucleosome_positions <- add_nuc_numbers_and_strand(DSBs = DSBs, nuc_centers = LSY5934_4h_nucleosome_positions, ideal_nuc_centers = ideal_nuc_centers)
+add_distance_to_nuc_helper(object_name = "LSY5934_0h_MNase_seq")
+add_distance_to_nuc_helper(object_name = "LSY5934_1h_MNase_seq")
+add_distance_to_nuc_helper(object_name = "LSY5934_2h_MNase_seq")
+add_distance_to_nuc_helper(object_name = "LSY5934_4h_MNase_seq")
 
-# calc distance from DSB-proximal nucleosome for sequencing data sets ------
-DSBs <- SrfIcs[-c(9, 17)]
-roi <- DSB_regions(DSBs = DSBs, region_width = 6000, up_rev_down_fw = TRUE)
 
-# t = 0
-nuc <- 1
-MNase <- add_distance_to_nucleosome(GRanges = LSY5934_0h_MNase_seq, nuc_centers = LSY5934_0h_nucleosome_positions, roi = roi, nuc = nuc)
-idx <- MNase$dist_to_nuc > -(nuc - 0.5) * nuc_dist  # & S1$dist_to_nuc <= 1200
-MNase_agg_0 <- aggregate(score ~ dist_to_nuc, data = MNase[idx], FUN = mean)
+# average and smoothen ----------------------------------------------------
+k <- 51
 
-# t = 1
-nuc <- 2
-MNase <- add_distance_to_nucleosome(GRanges = LSY5934_1h_MNase_seq, nuc_centers = LSY5934_1h_nucleosome_positions, roi = roi, nuc = nuc)
-idx <- MNase$dist_to_nuc > -(nuc - 0.5) * nuc_dist  # & S1$dist_to_nuc <= 1200
-MNase_agg_1 <- aggregate(score ~ dist_to_nuc, data = MNase[idx], FUN = mean)
-
-# t = 2
-nuc <- 3
-MNase <- add_distance_to_nucleosome(GRanges = LSY5934_2h_MNase_seq, nuc_centers = LSY5934_2h_nucleosome_positions, roi = roi, nuc = nuc)
-idx <- MNase$dist_to_nuc > -(nuc - 0.5) * nuc_dist  # & S1$dist_to_nuc <= 1200
-MNase_agg_2 <- aggregate(score ~ dist_to_nuc, data = MNase[idx], FUN = mean)
-
-# t = 4
-nuc <- 4
-MNase <- add_distance_to_nucleosome(GRanges = LSY5934_4h_MNase_seq, nuc_centers = LSY5934_4h_nucleosome_positions, roi = roi, nuc = nuc)
-idx <- MNase$dist_to_nuc > -(nuc - 0.5) * nuc_dist  # & S1$dist_to_nuc <= 1200
-MNase_agg_4 <- aggregate(score ~ dist_to_nuc, data = MNase[idx], FUN = mean)
+# MNase-seq data
+for(t in c(0, 1, 2, 4)){
+  tmp <- aggregate(score ~ dist_to_nuc, 
+                   data = get(paste0("LSY5934_", t, "h_MNase_seq")), FUN = mean)
+  tmp$score <- runmed(x = -tmp$score, k = k)
+  assign(x = paste0("MNase_seq_", t), value = tmp)
+}
 
 
 # plotting ----------------------------------------------------------------
-k <- 51
-
-# dirs --------------------------------------------------------------------
 plot_dir <- "04_Plots/mre11-nd/Avgs_algned_at_DSB_prxml_nuc"
 dir.create(path = plot_dir, showWarnings = FALSE)
+
 
 pdf(file = "tmp.pdf", width=3, height=2.5)
 par(cex = 1, mar = rep(0,4), oma = rep(0, 4))
 
-# start empty plot
-plot(x = NA, y = NA, xlim = c(-80, 1100), ylim = c(-11,0), 
-     axes = FALSE, ann = FALSE)
-
-# plot MNase-seq
-MNase_seq <- MNase_agg_0
-MNase_seq <- MNase_seq[MNase_seq$dist_to_nuc < 1100, ]
-y <- moving_average(x = MNase_seq$score, k = k, keep = 0)
-polygon(x = c(MNase_seq$dist_to_nuc[1], MNase_seq$dist_to_nuc, MNase_seq$dist_to_nuc[length(MNase_seq$dist_to_nuc)]), 
-        y = c(0, -y, 0), col = gray(level = 0.9), border = NA)
-
-MNase_seq <- MNase_agg_1
-MNase_seq <- MNase_seq[MNase_seq$dist_to_nuc < 1100 - nuc_dist, ]
-y <- moving_average(x = MNase_seq$score, k = k, keep = 0)
-polygon(x = c(MNase_seq$dist_to_nuc[1], MNase_seq$dist_to_nuc, MNase_seq$dist_to_nuc[length(MNase_seq$dist_to_nuc)]) + nuc_dist, 
-        y = c(0, -y, 0), col = gray(level = 0.8), border = NA)
-
-MNase_seq <- MNase_agg_2
-MNase_seq <- MNase_seq[MNase_seq$dist_to_nuc < 1100 - 2 * nuc_dist, ]
-y <- moving_average(x = MNase_seq$score, k = k, keep = 0)
-polygon(x = c(MNase_seq$dist_to_nuc[1], MNase_seq$dist_to_nuc, MNase_seq$dist_to_nuc[length(MNase_seq$dist_to_nuc)]) + 2 * nuc_dist, 
-        y = c(0, -y, 0), col = gray(level = 0.7), border = NA)
-
-MNase_seq <- MNase_agg_4
-MNase_seq <- MNase_seq[MNase_seq$dist_to_nuc < 1100 - 3 * nuc_dist, ]
-y <- moving_average(x = MNase_seq$score, k = k, keep = 0)
-polygon(x = c(MNase_seq$dist_to_nuc[1], MNase_seq$dist_to_nuc, MNase_seq$dist_to_nuc[length(MNase_seq$dist_to_nuc)]) + 3 * nuc_dist, 
-        y = c(0, -y, 0), col = gray(level = 0.6), border = NA)
-
-# add nucleosome marks
-x <- 1:6
-nuc <- 1
-segments(x0 = (x - nuc) * nuc_dist, y0 = -11, x1 = (x - nuc) * nuc_dist, y1 = 0, col = gray(level = 0.4), lty = "dashed")
+plotting_function(MNase_seq_0 = MNase_seq_0, MNase_seq_1 = MNase_seq_1, MNase_seq_2 = MNase_seq_2, MNase_seq_4 = MNase_seq_4,
+                  xlim = c(-165, 990))  
 
 dev.off()
 GS_embed_fonts(input = "tmp.pdf", output = paste0(plot_dir, "/LSY5934.pdf"))
