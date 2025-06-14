@@ -22,3 +22,18 @@ GS_embed_fonts <- function(input, output, remove_input_file = TRUE){
     file.remove(input)
   }
 }
+
+
+# moving average (median) ---------------------------------------------------
+# argument: numeric vector, integer
+# result: numeric vector
+# note: runmed, except for first n = keep elements, where original element values are used
+moving_average <- function(x, k, keep = 2){
+  x_length <- length(x)
+  out <- rep(0, x_length)
+  if(keep > 0){
+    out[1:keep] <- x[1:keep]
+  }
+  out[(keep + 1):x_length] <- runmed(x = x[(keep + 1):x_length], k = k)
+  return(out)
+}

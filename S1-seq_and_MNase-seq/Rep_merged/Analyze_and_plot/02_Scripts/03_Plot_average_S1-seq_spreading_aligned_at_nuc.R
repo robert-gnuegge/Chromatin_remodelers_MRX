@@ -2,7 +2,7 @@
 # purpose: align MNase-seq and S1-seq data at DSB-proximal nucleosome, average and plot
 # author: Robert Gnuegge (robert.gnuegge@gmail.com)
 # created: 05/27/24
-# last modified: 11/18/24
+# last modified: 06/14/25
 
 
 # load libraries ----------------------------------------------------------
@@ -39,7 +39,7 @@ add_distance_to_nuc <- function(seq_data, nuc_pos, nuc = 1, nuc_dist = 165){
     nuc_pos <- sort(nuc_pos)
   }
   
-  # if "(-)nuc" cannot be found, add it placing it at the expected distance
+  # if "nuc" cannot be found, add it placing it at the expected distance
   # from the next available nuc
   if(!(nuc %in% abs(nuc_pos$idx))){
     picked_nuc <- nuc + 1
@@ -138,11 +138,14 @@ plotting_function <- function(MNase_seq_0, MNase_seq_1, MNase_seq_2, MNase_seq_4
 }
 
 
+# define DSBs to be analyzed ==============================================
+DSBs <- SrfIcs[-c(9, 17)]  # exclude SrfIcs in duplicated regions
+DSBs <- DSBs[DSBs$DSB_kinetics_rank < 17] # exclude very slowly formed DSBs
+roi <- DSB_regions(DSBs = DSBs, region_width = 4000, up_rev_down_fw = TRUE)
+
 # LSY4518-13B =============================================================
 
 # load and process data ---------------------------------------------------
-DSBs <- SrfIcs[-c(9, 17)]  # exclude SrfIcs in duplicated regions
-roi <- DSB_regions(DSBs = DSBs, region_width = 4000, up_rev_down_fw = TRUE)
 
 load(file = "../../Rep_merged/S1-seq/03_Processed_data/S1-seq_coverage/LSY4518-13B_S1-seq.RData")
 LSY4518_13B_1h_S1_seq <- subsetByIntersect(subject = LSY4518_13B_1h_S1_seq, query = roi)
@@ -215,7 +218,7 @@ par(cex = 1, mar = rep(0,4), oma = rep(0, 4))
   
   plotting_function(MNase_seq_0 = MNase_seq_0, MNase_seq_1 = MNase_seq_1, MNase_seq_2 = MNase_seq_2, MNase_seq_4 = MNase_seq_4,
                     S1_seq_1 = S1_seq_1, S1_seq_2 = S1_seq_2, S1_seq_4 = S1_seq_4,
-                    xlim = c(-165, 990))  
+                    xlim = c(-160, 990))  
 
 dev.off()
 GS_embed_fonts(input = "tmp.pdf", output = paste0(plot_dir, "/LSY4518-13B.pdf"))
@@ -224,8 +227,6 @@ GS_embed_fonts(input = "tmp.pdf", output = paste0(plot_dir, "/LSY4518-13B.pdf"))
 # LSY5415 =============================================================
 
 # load and process data ---------------------------------------------------
-DSBs <- SrfIcs[-c(9, 17)]  # exclude SrfIcs in duplicated regions
-roi <- DSB_regions(DSBs = DSBs, region_width = 4000, up_rev_down_fw = TRUE)
 
 load(file = "../../Rep_merged/S1-seq/03_Processed_data/S1-seq_coverage/LSY5415_S1-seq.RData")
 LSY5415_1h_S1_seq <- subsetByIntersect(subject = LSY5415_1h_S1_seq, query = roi)
@@ -298,7 +299,7 @@ par(cex = 1, mar = rep(0,4), oma = rep(0, 4))
 
 plotting_function(MNase_seq_0 = MNase_seq_0, MNase_seq_1 = MNase_seq_1, MNase_seq_2 = MNase_seq_2, MNase_seq_4 = MNase_seq_4,
                   S1_seq_1 = S1_seq_1, S1_seq_2 = S1_seq_2, S1_seq_4 = S1_seq_4,
-                  xlim = c(-165, 990))  
+                  xlim = c(-160, 990))  
 
 dev.off()
 GS_embed_fonts(input = "tmp.pdf", output = paste0(plot_dir, "/LSY5415.pdf"))
@@ -307,8 +308,6 @@ GS_embed_fonts(input = "tmp.pdf", output = paste0(plot_dir, "/LSY5415.pdf"))
 # LSY5935 =============================================================
 
 # load and process data ---------------------------------------------------
-DSBs <- SrfIcs[-c(9, 17)]  # exclude SrfIcs in duplicated regions
-roi <- DSB_regions(DSBs = DSBs, region_width = 4000, up_rev_down_fw = TRUE)
 
 load(file = "../../Rep_merged/MNase-seq/03_Processed_data/MNase-seq_coverage/LSY5935_MNase-seq.RData")
 LSY5935_0h_MNase_seq <- subsetByIntersect(subject = LSY5935_0h_MNase_seq, query = roi)
@@ -363,17 +362,24 @@ pdf(file = "tmp.pdf", width=3, height=2.5)
 par(cex = 1, mar = rep(0,4), oma = rep(0, 4))
 
 plotting_function(MNase_seq_0 = MNase_seq_0, MNase_seq_1 = MNase_seq_1, MNase_seq_2 = MNase_seq_2, MNase_seq_4 = MNase_seq_4,
-                  xlim = c(-165, 990))  # , nuc_marks = 1:6  
+                  xlim = c(-160, 990))  # , nuc_marks = 1:6  
 
 dev.off()
 GS_embed_fonts(input = "tmp.pdf", output = paste0(plot_dir, "/LSY5935.pdf"))
+
+# save coverage at +1 Nuc
+tmp <- data.frame(time = c(0, 1, 2, 4),
+                  score = c(MNase_seq_0$score[MNase_seq_0$dist_to_nuc == 0],
+                            MNase_seq_1$score[MNase_seq_0$dist_to_nuc == 0],
+                            MNase_seq_2$score[MNase_seq_0$dist_to_nuc == 0],
+                            MNase_seq_4$score[MNase_seq_0$dist_to_nuc == 0]))
+
+write.table(x = tmp, file = paste0(plot_dir, "/Nuc+1_cov_LSY5935.txt"), row.names = FALSE)
 
 
 # LSY5934 =============================================================
 
 # load and process data ---------------------------------------------------
-DSBs <- SrfIcs[-c(9, 17)]  # exclude SrfIcs in duplicated regions
-roi <- DSB_regions(DSBs = DSBs, region_width = 4000, up_rev_down_fw = TRUE)
 
 load(file = "../../Rep_merged/MNase-seq/03_Processed_data/MNase-seq_coverage/LSY5934_MNase-seq.RData")
 LSY5934_0h_MNase_seq <- subsetByIntersect(subject = LSY5934_0h_MNase_seq, query = roi)
@@ -428,7 +434,18 @@ pdf(file = "tmp.pdf", width=3, height=2.5)
 par(cex = 1, mar = rep(0,4), oma = rep(0, 4))
 
 plotting_function(MNase_seq_0 = MNase_seq_0, MNase_seq_1 = MNase_seq_1, MNase_seq_2 = MNase_seq_2, MNase_seq_4 = MNase_seq_4,
-                  xlim = c(-165, 990))  
+                  xlim = c(-160, 990))
 
 dev.off()
 GS_embed_fonts(input = "tmp.pdf", output = paste0(plot_dir, "/LSY5934.pdf"))
+
+# save coverage at +1 Nuc
+tmp <- data.frame(time = c(0, 1, 2, 4),
+                  score = c(MNase_seq_0$score[MNase_seq_0$dist_to_nuc == 0],
+                            MNase_seq_1$score[MNase_seq_0$dist_to_nuc == 0],
+                            MNase_seq_2$score[MNase_seq_0$dist_to_nuc == 0],
+                            MNase_seq_4$score[MNase_seq_0$dist_to_nuc == 0]))
+
+tmp$score <- -tmp$score
+
+write.table(x = tmp, file = paste0(plot_dir, "/Nuc+1_cov_LSY5934.txt"), row.names = FALSE)

@@ -8,7 +8,6 @@
 source(file = "../../Src/JFly_colors.R")
 source(file = "../../Src/Misc_helper_functions.R")
 
-
 # read data ---------------------------------------------------------------
 Resected_fraction <- read.table(file = "03_Processed_data/Resection.txt", header = TRUE)
 
@@ -66,17 +65,19 @@ my_plot <- function(data, strains = NULL, colors, ylab, file_name, y_range = NUL
 
 # plotting ================================================================
 plot_dir <- "04_Plots/"
-plot_colors <- c("black", "gray", JFly_colors[c(4, 2, 7, 3)])
-strains <- c("4518-13B_1", "4518-13B_2", "5935_1", "5935_2", "5934_1", "5934_2")
+plot_colors <- c("gray", "black", JFly_colors[c(2, 4, 3, 7, 6, 8)])
+strains <- c("4518-13B_1", "4518-13B_2", "5415_1", "5415_2", "5935_1", "5935_2", "5934_1", "5934_2")
 
 # plot legend -------------------------------------------------------------
 Legend_txt <- c("WT #1", "WT #2",
+                expression(italic("fun30"*Delta)~"#1"),
+                expression(italic("fun30"*Delta)~"#2"),
                 expression(italic("mre11-nd")~"#1"),
                 expression(italic("mre11-nd")~"#2"),
                 expression(italic("mre11-nd fun30"*Delta)~"#1"),
                 expression(italic("mre11-nd fun30"*Delta)~"#2"))
 
-pdf(file = "tmp.pdf", width=2.00, height=1.45)
+pdf(file = "tmp.pdf", width=2, height=1.85)
 par(cex = 1, mar = rep(0, 4))
 plot(1, type="n", axes=FALSE, xlab="", ylab="")
 legend(1, 1, xjust=0.5, yjust=0.5, legend = Legend_txt, col = plot_colors, pch = 20)

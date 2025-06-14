@@ -14,7 +14,8 @@ SrfIcs_df <- data.frame(seqnames = paste0("chr", as.roman(c(2, 3, 4, 5, 5, 7, 7,
 # -------------------------------------------------------------------------
 # SrfIcs as GRanges object
 SrfIcs <- GRanges(seqnames = SrfIcs_df$seqnames, ranges = IRanges(start = SrfIcs_df$pos, width = 1))
-SrfIcs$DSB_kinetics_rank <- c(5, 1, 19, 12, 2, 14, 9, 18, 21, 8, 3, 16, 13, 10, 15, 4, 6, 7, 11, 20, 17) 
+SrfIcs$DSB_kinetics_rank <- c(5, 1, 18, 7, 12, 11, 15, 20, 6, 3, 2, 17, 14, 9, 16, 4, 6, 10, 19, 8, 13) 
+# SrfIcs$DSB_kinetics_rank <- c(5, 1, 19, 12, 2, 14, 9, 18, 21, 8, 3, 16, 13, 10, 15, 4, 6, 7, 11, 20, 17) # from MolCell paper
 S_cerevisiae_seqinfo <- Seqinfo(seqnames = c(paste0("chr", as.roman(1:16)), "chrM", "micron"), 
                                 seqlengths = c(230218, 813184, 316620, 1531933, 576874, 270161, 1090940, 562643, 439888, 
                                                745751, 666816, 1078177, 924431, 784333, 1091291, 948066, 85779, 6367))
