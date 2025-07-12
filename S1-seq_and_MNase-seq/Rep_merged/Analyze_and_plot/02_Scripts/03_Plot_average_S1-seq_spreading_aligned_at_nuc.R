@@ -175,6 +175,10 @@ add_distance_to_nuc_helper <- function(object_name){
     nuc_pos <- subsetByIntersect(subject = LSY4518_13B_0h_nucleosome_positions, query = roi[r])
     tmp <- c(tmp, add_distance_to_nuc(seq_data = seq_data, nuc_pos = nuc_pos, nuc = 1))
   }
+  # add also distance to nearest DSB
+  # immediately adjacent positions are also resulting in a 0 distance, therefore 1 is added to all distances and then the SrfIcs positions are set to 0
+  tmp$distance_to_DSB <- mcols(distanceToNearest(x = tmp, subject = DSBs))$distance + 1
+  mcols(tmp[nearest(x = DSBs, subject = tmp) - 1])$distance_to_DSB <- 0
   assign(x = object_name, value = tmp, envir = .GlobalEnv)
 }
 
@@ -193,11 +197,15 @@ k <- 51
 
 # MNase-seq data
 for(t in c(0, 1, 2, 4)){
-  tmp <- aggregate(score ~ dist_to_nuc, 
+  tmp <- aggregate(cbind(score, distance_to_DSB) ~ dist_to_nuc, 
                    data = get(paste0("LSY4518_13B_", t, "h_MNase_seq")), FUN = mean)
   tmp$score <- runmed(x = tmp$score, k = k)
   assign(x = paste0("MNase_seq_", t), value = tmp)
 }
+
+MNase_seq_4$dist_to_nuc[which.min(abs(MNase_seq_4$distance_to_DSB - 98))]
+MNase_seq_4$dist_to_nuc[which.min(abs(MNase_seq_4$distance_to_DSB - 640))]
+
 
 # S1-seq data
 for(t in c(1, 2, 4)){
