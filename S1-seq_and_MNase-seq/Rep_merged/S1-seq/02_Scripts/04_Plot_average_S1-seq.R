@@ -2,7 +2,7 @@
 # purpose: plot average S1-seq spreading over time
 # author: Robert Gnuegge (robert.gnuegge@gmail.com)
 # created: 06/01/25
-# last modified: 06/14/25
+# last modified: 12/30/25
 
 
 # load libraries ----------------------------------------------------------
@@ -196,3 +196,227 @@ points(x = WT_4h_agg$distance_to_DSB, y = WT_4h_agg$mov_med,
 
 dev.off()
 GS_embed_fonts(input = "tmp.pdf", output = paste0(plot_dir, "/Avg_S1-seq_spreading_4h.pdf"))
+
+
+# all time points =============================================================
+
+pdf(file = "tmp.pdf", width=2.5, height=2.25)
+par(cex = 1, mar = c(5.1, 4.1, 4.1, 2.1) - c(2, 0.7, 4, 2), tcl = -0.3, mgp = c(2.5, 0.6, 0), las = 1)
+
+# start empty plot
+plot(x = NA, y = NA, xlim = c(0, 1300), ylim = c(0, 60), ylab = "Average S1-seq (RPM)", xlab = NA, xaxt = "n", yaxt = "n")
+title(xlab = "Distance from DSB (nt)", line = 2)
+axis(side = 1, at = c(0, 4, 8, 12) * 100)
+axis(side = 2, at = 0:6 * 10, labels = c(0:4 * 10, 220, 230))
+
+# 1h ----------------------------------------------------------------------
+
+# fun30
+fun30_1h_agg$mov_med[1:3]
+fun30_1h_agg$mov_med[1:2] <- c(fun30_1h_agg$mov_med[1] - 170, 45)   # to fit into part above y-axis break (see below)
+
+points(x = fun30_1h_agg$distance_to_DSB, y = fun30_1h_agg$mov_med, 
+       type = "l", lwd = 1.5, col = JFly_colors[4])
+
+
+# # add average spread (half AUC)
+# i <- find_x_where_half_AUC(x = fun30_1h_agg$distance_to_DSB, y = fun30_1h_agg$mov_med)
+# yy <- par("usr")[4] - 0.15 * (par("usr")[4] - par("usr")[3]) - y_shift
+# lines(x = c(x[i], x[i]), y = c(0, yy), col = my_colors[2], lty = "dashed")
+# text(x = x[i], y = yy, labels = x[i], adj = c(0.5, -0.3), col = my_colors[2])
+
+# WT
+points(x = WT_1h_agg$distance_to_DSB, y = WT_1h_agg$mov_med, 
+       type = "l", lwd = 1.5, col = "black")
+
+# # add "average" spread (half AUC)
+# i <- find_x_where_half_AUC(x = WT_1h_agg$distance_to_DSB, y = WT_1h_agg$mov_med)
+# yy <- par("usr")[4] - 0.325 * (par("usr")[4] - par("usr")[3]) - y_shift
+# lines(x = c(x[i], x[i]), y = c(0, yy), col = my_colors[1], lty = "dashed")
+# text(x = x[i], y = yy, labels = x[i], adj = c(0.5, -0.3), col = my_colors[1])
+
+
+# 2h ----------------------------------------------------------------------
+
+# fun30
+fun30_2h_agg$mov_med[1:3]
+fun30_2h_agg$mov_med[1] <- 45   # to fit into part above y-axis break (see below)
+
+points(x = fun30_2h_agg$distance_to_DSB, y = fun30_2h_agg$mov_med, 
+       type = "l", lwd = 1.5, col = JFly_colors[2])
+
+# # add average spread (half AUC)
+# i <- find_x_where_half_AUC(x = fun30_2h_agg$distance_to_DSB, y = fun30_2h_agg$mov_med)
+# yy <- par("usr")[4] - 0.15 * (par("usr")[4] - par("usr")[3]) - y_shift
+# lines(x = c(x[i], x[i]), y = c(0, yy), col = my_colors[2], lty = "dashed")
+# text(x = x[i], y = yy, labels = x[i], adj = c(0.5, -0.3), col = my_colors[2])
+
+
+# WT
+points(x = WT_2h_agg$distance_to_DSB, y = WT_2h_agg$mov_med, 
+       type = "l", lwd = 1.5, col = gray(0.33))
+
+# # add "average" spread (half AUC)
+# i <- find_x_where_half_AUC(x = WT_2h_agg$distance_to_DSB, y = WT_2h_agg$mov_med)
+# yy <- par("usr")[4] - 0.325 * (par("usr")[4] - par("usr")[3]) - y_shift
+# lines(x = c(x[i], x[i]), y = c(0, yy), col = my_colors[1], lty = "dashed")
+# text(x = x[i], y = yy, labels = x[i], adj = c(0.5, -0.3), col = my_colors[1])
+
+
+# 4h ----------------------------------------------------------------------
+
+# fun30
+points(x = fun30_4h_agg$distance_to_DSB, y = fun30_4h_agg$mov_med, 
+       type = "l", lwd = 1.5, col = JFly_colors[6])
+
+# # add average spread (half AUC)
+# i <- find_x_where_half_AUC(x = fun30_4h_agg$distance_to_DSB, y = fun30_4h_agg$mov_med)
+# yy <- par("usr")[4] - 0.15 * (par("usr")[4] - par("usr")[3]) - y_shift
+# lines(x = c(x[i], x[i]), y = c(0, yy), col = my_colors[2], lty = "dashed")
+# text(x = x[i], y = yy, labels = x[i], adj = c(0.5, -0.3), col = my_colors[2])
+
+# WT
+points(x = WT_4h_agg$distance_to_DSB, y = WT_4h_agg$mov_med, 
+       type = "l", lwd = 1.5, col = gray(0.67))
+
+# # add "average" spread (half AUC)
+# i <- find_x_where_half_AUC(x = WT_4h_agg$distance_to_DSB, y = WT_4h_agg$mov_med)
+# yy <- par("usr")[4] - 0.325 * (par("usr")[4] - par("usr")[3]) - y_shift
+# lines(x = c(x[i], x[i]), y = c(0, yy), col = my_colors[1], lty = "dashed")
+# text(x = x[i], y = yy, labels = x[i], adj = c(0.5, -0.3), col = my_colors[1])
+
+# y-axis break
+axis.break(axis = 2, breakpos = 45, style = "slash", bgcol = "white")
+rect(xleft = -10, ybottom = 45 - 0.5, xright = 10, ytop =  45 + 0.5, col = "white", border = "white")
+
+
+
+dev.off()
+GS_embed_fonts(input = "tmp.pdf", output = paste0(plot_dir, "/Avg_S1-seq_spreading_all_h.pdf"))
+
+
+
+# all time points WT ======================================================
+x <- WT_1h_agg$distance_to_DSB
+my_colors <- gray(level = c(0, 0.5, 0.75))
+
+pdf(file = "tmp.pdf", width=2.25, height=2)
+par(cex = 1, mar = c(5.1, 4.1, 4.1, 2.1) - c(3.7, 2.1, 4, 2), tcl = -0.3, mgp = c(2.5, 0.5, 0), las = 1)
+
+# start empty plot
+plot(x = NA, y = NA, xlim = c(0, 1300), ylim = c(0, 35), ylab = NA, xlab = NA, xaxt = "n", yaxt = "n")
+title(xlab = "Distance from DSB (nt)", line = 2)
+axis(side = 1, at = c(0, 4, 8, 12) * 100, labels = NA)
+axis(side = 2, at = 0:3 * 10)
+
+# 1h ----------------------------------------------------------------------
+points(x = WT_1h_agg$distance_to_DSB, y = WT_1h_agg$mov_med, 
+       type = "l", lwd = 1.5, col = my_colors[1])
+
+# add "average" spread (half AUC)
+i <- find_x_where_half_AUC(x = WT_1h_agg$distance_to_DSB, y = WT_1h_agg$mov_med)
+yy <- par("usr")[3] + 0.85 * (par("usr")[4] - par("usr")[3])
+lines(x = c(x[i], x[i]), y = c(0, yy), col = my_colors[1], lty = "dashed")
+text(x = x[i], y = yy, labels = x[i], adj = c(0.5, 0), col = my_colors[1])
+
+
+# 2h ----------------------------------------------------------------------
+points(x = WT_2h_agg$distance_to_DSB, y = WT_2h_agg$mov_med, 
+       type = "l", lwd = 1.5, col = my_colors[2])
+
+# add average spread (half AUC)
+i <- find_x_where_half_AUC(x = WT_2h_agg$distance_to_DSB, y = WT_2h_agg$mov_med)
+yy <- par("usr")[3] + 0.7 * (par("usr")[4] - par("usr")[3])
+lines(x = c(x[i], x[i]), y = c(0, yy), col = my_colors[2], lty = "dashed")
+text(x = x[i], y = yy, labels = x[i], adj = c(0.2, 0), col = my_colors[2])
+
+# 4h ----------------------------------------------------------------------
+points(x = WT_4h_agg$distance_to_DSB, y = WT_4h_agg$mov_med, 
+       type = "l", lwd = 1.5, col = my_colors[3])
+
+# add average spread (half AUC)
+i <- find_x_where_half_AUC(x = WT_4h_agg$distance_to_DSB, y = WT_4h_agg$mov_med)
+yy <- par("usr")[3] + 0.55 * (par("usr")[4] - par("usr")[3])
+lines(x = c(x[i], x[i]), y = c(0, yy), col = my_colors[3], lty = "dashed")
+text(x = x[i], y = yy, labels = x[i], adj = c(0.2, 0), col = my_colors[3])
+
+# # strain label ------------------------------------------------------------
+# text(y = par("usr")[3] + 0.9 * (par("usr")[4] - par("usr")[3]), 
+#      x = par("usr")[1] + 0.9 * (par("usr")[2] - par("usr")[1]), 
+#      adj = c(1, 1), labels = expression(bold("WT")))
+
+dev.off()
+GS_embed_fonts(input = "tmp.pdf", output = paste0(plot_dir, "/Avg_S1-seq_spreading_WT_all_h.pdf"))
+
+
+
+# all time points fun30 ======================================================
+x <- fun30_1h_agg$distance_to_DSB
+my_colors <- gray(level = c(0, 0.5, 0.75))
+
+# adjust data to fit into part above/below y-axis break
+fun30_1h_agg$mov_med[1:3]
+fun30_1h_agg$mov_med[1:2] <- c(fun30_1h_agg$mov_med[1] - 170, 45)   # to fit into part above y-axis break (see below)
+
+fun30_2h_agg$mov_med[1:3]
+fun30_2h_agg$mov_med[1] <- 45   # to fit into part above y-axis break (see below)
+
+
+# plotting ----------------------------------------------------------------
+pdf(file = "tmp.pdf", width=2.25, height=2)
+par(cex = 1, mar = c(5.1, 4.1, 4.1, 2.1) - c(3.7, 2.1, 4, 2), tcl = -0.3, mgp = c(2.5, 0.5, 0), las = 1)
+
+# start empty plot
+plot(x = NA, y = NA, xlim = c(0, 1300), ylim = c(0, 60), ylab = NA, xlab = NA, xaxt = "n", yaxt = "n")
+title(xlab = "Distance from DSB (nt)", line = 2)
+axis(side = 1, at = c(0, 4, 8, 12) * 100)
+axis(side = 2, at = 0:6 * 10, labels = c(0:4 * 10, 220, 230))
+
+# 1h ----------------------------------------------------------------------
+points(x = fun30_1h_agg$distance_to_DSB, y = fun30_1h_agg$mov_med, 
+       type = "l", lwd = 1.5, col = my_colors[1])
+
+# add "average" spread (half AUC)
+i <- find_x_where_half_AUC(x = fun30_1h_agg$distance_to_DSB, y = fun30_1h_agg$mov_med)
+yy <- par("usr")[3] + 0.9 * (par("usr")[4] - par("usr")[3])
+lines(x = c(x[i], x[i]), y = c(0, yy), col = my_colors[1], lty = "dashed")
+text(x = x[i], y = yy, labels = x[i], adj = c(0.4, 0), col = my_colors[1])
+
+
+# 2h ----------------------------------------------------------------------
+points(x = fun30_2h_agg$distance_to_DSB, y = fun30_2h_agg$mov_med, 
+       type = "l", lwd = 1.5, col = my_colors[2])
+
+# add average spread (half AUC)
+i <- find_x_where_half_AUC(x = fun30_2h_agg$distance_to_DSB, y = fun30_2h_agg$mov_med)
+yy <- par("usr")[3] + 0.75 * (par("usr")[4] - par("usr")[3])
+lines(x = c(x[i], x[i]), y = c(0, yy), col = my_colors[2], lty = "dashed")
+text(x = x[i], y = yy, labels = x[i], adj = c(0.15, 0), col = my_colors[2])
+
+# 4h ----------------------------------------------------------------------
+points(x = fun30_4h_agg$distance_to_DSB, y = fun30_4h_agg$mov_med, 
+       type = "l", lwd = 1.5, col = my_colors[3])
+
+# add average spread (half AUC)
+i <- find_x_where_half_AUC(x = fun30_4h_agg$distance_to_DSB, y = fun30_4h_agg$mov_med)
+yy <- par("usr")[3] + 0.6 * (par("usr")[4] - par("usr")[3])
+lines(x = c(x[i], x[i]), y = c(0, yy), col = my_colors[3], lty = "dashed")
+text(x = x[i], y = yy, labels = x[i], adj = c(0.2, 0), col = my_colors[3])
+
+# y-axis break ------------------------------------------------------------
+axis.break(axis = 2, breakpos = 45, style = "slash", bgcol = "white")
+rect(xleft = -10, ybottom = 45 - 0.5, xright = 10, ytop =  45 + 0.5, col = "white", border = "white")
+
+
+# # strain label ------------------------------------------------------------
+# text(y = par("usr")[3] + 0.9 * (par("usr")[4] - par("usr")[3]), 
+#      x = par("usr")[1] + 0.9 * (par("usr")[2] - par("usr")[1]), 
+#      adj = c(1, 1), labels = expression(bolditalic("fun30")*bold(Delta)))
+
+
+# legend ------------------------------------------------------------------
+legend(x = "bottomright", legend = paste0(c(1, 2, 4), " h"), 
+       col = my_colors, lwd = 1.5, seg.len = 1, inset = c(0.05, 0.15))
+
+dev.off()
+GS_embed_fonts(input = "tmp.pdf", output = paste0(plot_dir, "/Avg_S1-seq_spreading_fun30_all_h.pdf"))

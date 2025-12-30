@@ -72,12 +72,20 @@ Legend_txt <- c("WT",
                 expression(italic("rad9"*Delta)),
                 expression(italic("fun30"*Delta~"rad9"*Delta)))
 
+idx <- c(1, 3, 2, 4)
 pdf(file = "tmp.pdf", width=1.45, height=1.05)
 par(cex = 1, mar = rep(0, 4))
 plot(1, type="n", axes=FALSE, xlab="", ylab="")
-legend(1, 1, xjust=0.5, yjust=0.5, legend = Legend_txt, col = MyColors, pch = 20)
+legend(1, 1, xjust=0.5, yjust=0.5, legend = Legend_txt[idx], col = MyColors[idx], pch = 20)
 dev.off()
 GS_embed_fonts(input = "tmp.pdf", output = paste0(plot_dir, "Legend.pdf"))
+
+pdf(file = "tmp.pdf", width=2.75, height=0.65)
+par(cex = 1, mar = rep(0, 4))
+plot(1, type="n", axes=FALSE, xlab="", ylab="")
+legend(1, 1, xjust=0.5, yjust=0.5, legend = Legend_txt[idx], col = MyColors[idx], pch = 20, ncol = 2)
+dev.off()
+GS_embed_fonts(input = "tmp.pdf", output = paste0(plot_dir, "Legend_horiz.pdf"))
 
 
 # cutting -----------------------------------------------------------------

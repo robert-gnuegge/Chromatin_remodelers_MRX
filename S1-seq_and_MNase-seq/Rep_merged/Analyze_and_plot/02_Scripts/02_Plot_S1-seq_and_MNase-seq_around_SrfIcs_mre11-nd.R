@@ -2,7 +2,7 @@
 # purpose: generate S1-seq and MNase-seq coverage plots around genomic SrfIcs in compact form
 # author: Robert Gnuegge (robert.gnuegge@gmail.com)
 # created: 05/26/24
-# last modified: 05/26/24
+# last modified: 07/12/25
 
 # load libraries ----------------------------------------------------------
 library(GenomicRanges)
@@ -77,7 +77,7 @@ load(file = "../../../Src/S_cerevisiae_genome_features.RData")
 names(mcols(all_features))[1] <- "id"
 all_features <- all_features[!(all_features$id == "") & all_features$type == "ORF"]
 
-AT_genes <- AnnotationTrack(range = all_features, name = NULL, showFeatureId = TRUE, cex = 0.67, featureAnnotation = "id",
+AT_genes <- AnnotationTrack(range = all_features, name = NULL, showFeatureId = FALSE, cex = 0.67, featureAnnotation = "id",
                             arrowHeadMaxWidth = 10, fill = "white", col = "gray", fontcolor.item = "gray")
 
 # # to add SrfIcs location to Annotation track
@@ -119,6 +119,7 @@ calc_ylim <- function(GRanges, roi, symmetric = FALSE){
   return(tmp)
 }
 
+n <- 18
 # iterate through all SrfIcs
 for (n in 1:length(SrfIcs)){
   

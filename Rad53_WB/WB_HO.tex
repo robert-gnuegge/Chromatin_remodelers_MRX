@@ -27,10 +27,10 @@
 	%
 	\begin{tikzpicture}[Label/.style={font=\bfseries, inner sep=0ex, xshift=1ex, anchor=west}]
 		%
-		% SrfI =================================================
+		% HO =================================================
 		%
 		% Rad53 --------------------------------------
-		\path (0,0) node[inner sep=0ex] (Rad53) {\includegraphics[width=\PicWidth]{Rad53_SrfI.jpg}};
+		\path (0,0) node[inner sep=0ex] (Rad53) {\includegraphics[width=\PicWidth]{Rad53_HO.jpg}};
 		% frame
 		\draw (Rad53.north west) rectangle (Rad53.south east);
 		% label
@@ -57,7 +57,7 @@
 			% time
 			\pgfmathsetmacro{\Start}{0.095}
 			\pgfmathsetmacro{\Sep}{0.117}
-			\path (Rad53.north east) node[anchor=south west] (L) {\strut};
+			\path (Rad53.north east) node[anchor=south west] (L) {Time (h)\strut};
 			\foreach[count=\i from 1] \x in {0, 1, 2, 4, 0, 1, 2, 4}{
 				\pgfmathsetmacro{\y}{\Start+(\i-1)*\Sep}
 				% alternating offset
@@ -72,9 +72,16 @@
 			\path (L.north west) node[anchor=south west] (S) {\strut};
 			\path ($(L.north)!0.5!(S.south)$) coordinate (y);	
 			\draw ($(L1.west|-y)+(-\tmp,0)$) -- ($(L4.east|-y)+(\tmp,0)$) node[midway] (x) {};
-			\path (x|-S) node {\textit{FUN30}};
+			\path (x|-S) node {WT};
 			\draw ($(L5.west|-y)+(-\tmp,0)$) -- ($(L8.east|-y)+(\tmp,0)$) node[midway] (x) {};
 			\path (x|-S) node {\textit{fun30$\Delta$}};
+			%
+			% HO
+			\setlength{\tmp}{0.25ex}
+			\path (S.north west) node[anchor=south west] (D) {\strut};
+			\path ($(S.north)!0.5!(D.south)$) coordinate (y);	
+			\draw ($(L1.west|-y)+(-\tmp,0)$) -- ($(L8.east|-y)+(\tmp,0)$) node[midway] (x) {};
+			\path (x|-D) node {HO-induced DSB};
 			%
 			% kDa
 			\draw ($(Rad53.north west)!0.17!(Rad53.south west)-(1\PSep,0)$) -- ++(-2ex, 0ex) node[anchor=east] {150 kDa};
@@ -84,7 +91,7 @@
 		\end{scope}
 		%
 		% Pgk1 -----------------------------------
-		\path (Rad53.south) ++(0,-1.5ex) node[inner sep=0ex, anchor=north] (Pgk1) {\includegraphics[width=\PicWidth]{Pgk1_SrfI.jpg}};
+		\path (Rad53.south) ++(0,-1.5ex) node[inner sep=0ex, anchor=north] (Pgk1) {\includegraphics[width=\PicWidth]{Pgk1_HO.jpg}};
 		% frame
 		\draw (Pgk1.north west) rectangle (Pgk1.south east);
 		% label

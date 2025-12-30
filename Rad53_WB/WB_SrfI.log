@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.6.6)  4 MAY 2025 08:16
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.6.6)  26 DEC 2025 10:44
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
-**WB.tex
-(./WB.tex
+**WB_SrfI.tex
+(./WB_SrfI.tex
 LaTeX2e <2020-02-02> patch level 5
 L3 programming layer <2020-06-03>
 (/usr/local/texlive/2020/texmf-dist/tex/latex/standalone/standalone.cls
@@ -408,8 +408,8 @@ File: l3backend-pdfmode.def 2020-06-03 L3 backend support: PDF mode
 \l__kernel_color_stack_int=\count199
 \l__pdf_internal_box=\box57
 )
-(./WB.aux)
-\openout1 = `WB.aux'.
+(./WB_SrfI.aux)
+\openout1 = `WB_SrfI.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 21.
 LaTeX Font Info:    ... okay on input line 21.
@@ -432,7 +432,6 @@ File: ot1phv.fd 2020/03/25 scalable font definitions for OT1/phv.
 )
 LaTeX Font Info:    Font shape `OT1/phv/m/n' will be
 (Font)              scaled to size 9.19998pt on input line 21.
-
 ABD: EveryShipout initializing macros
 (/usr/local/texlive/2020/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
@@ -468,35 +467,35 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <5> on input line 37.
 LaTeX Font Info:    Font shape `OT1/phv/m/it' in size <10> not available
-(Font)              Font shape `OT1/phv/m/sl' tried instead on input line 75.
+(Font)              Font shape `OT1/phv/m/sl' tried instead on input line 77.
 LaTeX Font Info:    Font shape `OT1/phv/m/sl' will be
-(Font)              scaled to size 9.19998pt on input line 75.
+(Font)              scaled to size 9.19998pt on input line 77.
 <Pgk1_SrfI.jpg, id=5, 899.36pt x 188.705pt>
 File: Pgk1_SrfI.jpg Graphic file (type jpg)
 <use Pgk1_SrfI.jpg>
-Package pdftex.def Info: Pgk1_SrfI.jpg  used on input line 87.
+Package pdftex.def Info: Pgk1_SrfI.jpg  used on input line 94.
 (pdftex.def)             Requested size: 170.71652pt x 35.81976pt.
 
 [1
 
 {/usr/local/texlive/2020/texmf-var/fonts/map/pdftex/updmap/pdftex.map} <./Rad53
-_SrfI.jpg> <./Pgk1_SrfI.jpg>] (./WB.aux) ) 
+_SrfI.jpg> <./Pgk1_SrfI.jpg>] (./WB_SrfI.aux) ) 
 Here is how much of TeX's memory you used:
- 12688 strings out of 481664
- 262012 string characters out of 5923715
- 473255 words of memory out of 5000000
- 28308 multiletter control sequences out of 15000+600000
+ 12695 strings out of 481664
+ 262144 string characters out of 5923715
+ 475270 words of memory out of 5000000
+ 28315 multiletter control sequences out of 15000+600000
  537617 words of font info for 30 fonts, out of 8000000 for 9000
  398 hyphenation exceptions out of 8191
- 68i,7n,68p,408b,737s stack positions out of 5000i,500n,10000p,200000b,80000s
-{/usr/local/texlive/2020/texmf-dist/f
-onts/enc/dvips/base/8r.enc}</usr/local/texlive/2020/texmf-dist/fonts/type1/publ
-ic/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/publi
-c/amsfonts/cm/cmr10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/urw/hel
-vetic/uhvb8a.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/urw/helvetic/u
-hvr8a.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/urw/helvetic/uhvro8a.
-pfb>
-Output written on WB.pdf (1 page, 98828 bytes).
+ 68i,7n,68p,413b,737s stack positions out of 5000i,500n,10000p,200000b,80000s
+{/usr/local/texlive/2020/texmf-d
+ist/fonts/enc/dvips/base/8r.enc}</usr/local/texlive/2020/texmf-dist/fonts/type1
+/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/
+public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/ur
+w/helvetic/uhvb8a.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/urw/helve
+tic/uhvr8a.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/urw/helvetic/uhv
+ro8a.pfb>
+Output written on WB_SrfI.pdf (1 page, 101266 bytes).
 PDF statistics:
  34 PDF objects out of 1000 (max. 8388607)
  23 compressed objects within 1 object stream

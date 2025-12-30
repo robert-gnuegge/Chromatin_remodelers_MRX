@@ -2,13 +2,14 @@
 # purpose: plot resection data
 # author: Robert Gnuegge (robert.gnuegge@gmail.com)
 # created: 03/31/24
-# last modified: 03/31/24
+# last modified: 07/13/25
 
 # read helper functions and files -----------------------------------------
 source(file = "../../Src/JFly_colors.R")
 source(file = "../../Src/Misc_helper_functions.R")
 
 # read data ---------------------------------------------------------------
+Cut_fraction <- read.table(file = "03_Processed_data/Cutting.txt", header = TRUE)
 Resected_fraction <- read.table(file = "03_Processed_data/Resection.txt", header = TRUE)
 
 # plotting function =======================================================
@@ -84,12 +85,16 @@ legend(1, 1, xjust=0.5, yjust=0.5, legend = Legend_txt, col = plot_colors, pch =
 dev.off()
 GS_embed_fonts(input = "tmp.pdf", output = paste0(plot_dir, "Legend.pdf"))
 
-pdf(file = "tmp.pdf", width=5.70, height=0.65)
-par(cex = 1, mar = rep(0, 4))
-plot(1, type="n", axes=FALSE, xlab="", ylab="")
-legend(1, 1, xjust=0.5, yjust=0.5, legend = Legend_txt, col = plot_colors, pch = 20, ncol = 3)
-dev.off()
-GS_embed_fonts(input = "tmp.pdf", output = paste0(plot_dir, "Legend_horiz.pdf"))
+# pdf(file = "tmp.pdf", width=5.70, height=0.65)
+# par(cex = 1, mar = rep(0, 4))
+# plot(1, type="n", axes=FALSE, xlab="", ylab="")
+# legend(1, 1, xjust=0.5, yjust=0.5, legend = Legend_txt, col = plot_colors, pch = 20, ncol = 3)
+# dev.off()
+# GS_embed_fonts(input = "tmp.pdf", output = paste0(plot_dir, "Legend_horiz.pdf"))
+
+# cutting -----------------------------------------------------------------
+tmp <- Cut_fraction[Cut_fraction$primers == "oRG46_oRG47", ]
+my_plot(data = tmp, strains = strains, colors = plot_colors, ylab = "Cut Fraction", file_name = paste0(plot_dir, "Cut_fraction.pdf"))
 
 # +98 bp ----------------------------------------------------------------------
 tmp <- Resected_fraction[Resected_fraction$primers == "oRG50_oRG51", ]

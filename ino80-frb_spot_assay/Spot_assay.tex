@@ -30,7 +30,7 @@
 		% strains
 		\pgfmathsetmacro{\Start}{0.22}
 		\pgfmathsetmacro{\Sep}{0.28}
-		\foreach[count=\i] \strain in {WT, \textit{arp8$\Delta$}, \textit{ino80-frb}}{
+		\foreach[count=\i] \strain in {WT, \textit{arp8$\Delta$}, \textit{ino80-aa}}{
 			\pgfmathsetmacro{\x}{\Start+(\i-1)*\Sep}
 			\path ($(YPD.north west)!\x!(YPD.south west)$) node[xshift=-\LabelSep, anchor=east] {\strain};
 		}
@@ -40,7 +40,7 @@
 		% strains
 		\pgfmathsetmacro{\Start}{0.22}
 		\pgfmathsetmacro{\Sep}{0.28}
-		\foreach[count=\i] \strain in {WT, \textit{arp8$\Delta$}, \textit{ino80-frb}}{
+		\foreach[count=\i] \strain in {WT, \textit{arp8$\Delta$}, \textit{ino80-aa}}{
 			\pgfmathsetmacro{\x}{\Start+(\i-1)*\Sep}
 			\path ($(SC_wo_I.north west)!\x!(SC_wo_I.south west)$) node[xshift=-\LabelSep, anchor=east] {\strain};
 		}
@@ -50,7 +50,7 @@
 		% strains
 		\pgfmathsetmacro{\Start}{0.22}
 		\pgfmathsetmacro{\Sep}{0.28}
-		\foreach[count=\i] \strain in {WT, \textit{arp8$\Delta$}, \textit{ino80-frb}}{
+		\foreach[count=\i] \strain in {WT, \textit{arp8$\Delta$}, \textit{ino80-aa}}{
 			\pgfmathsetmacro{\x}{\Start+(\i-1)*\Sep}
 			\path ($(YPE.north west)!\x!(YPE.south west)$) node[xshift=-\LabelSep, anchor=east] {\strain};
 		}
@@ -60,7 +60,7 @@
 		% strains
 		\pgfmathsetmacro{\Start}{0.22}
 		\pgfmathsetmacro{\Sep}{0.28}
-		\foreach[count=\i] \strain in {WT, \textit{arp8$\Delta$}, \textit{ino80-frb}}{
+		\foreach[count=\i] \strain in {WT, \textit{arp8$\Delta$}, \textit{ino80-aa}}{
 			\pgfmathsetmacro{\x}{\Start+(\i-1)*\Sep}
 			\path ($(YPE_37.north west)!\x!(YPE_37.south west)$) node[xshift=-\LabelSep, anchor=east] {\strain};
 		}
