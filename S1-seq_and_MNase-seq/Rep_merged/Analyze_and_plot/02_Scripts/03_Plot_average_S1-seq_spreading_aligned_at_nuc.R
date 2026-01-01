@@ -138,6 +138,22 @@ plotting_function <- function(MNase_seq_0, MNase_seq_1, MNase_seq_2, MNase_seq_4
 }
 
 
+# find x for which AUC is half of total AUC
+# argument: numeric vectors
+# result: double
+find_x_where_half_AUC <- function(x, y){
+  AUC <- sum(diff(x) * (head(y,-1)+tail(y,-1)))/2  # area under curve (source: https://stackoverflow.com/a/30280873/11705274)
+  # find x where half AUC is reached  
+  AUC.x <- 0
+  z <- 1
+  while (AUC.x <= 0.5 * AUC) {
+    z <- z + 1
+    AUC.x <- sum(diff(x[1:z]) * (head(y[1:z],-1)+tail(y[1:z],-1)))/2
+  }
+  return(x[z])
+}
+
+
 # define DSBs to be analyzed ==============================================
 DSBs <- SrfIcs[-c(9, 17)]  # exclude SrfIcs in duplicated regions
 DSBs <- DSBs[DSBs$DSB_kinetics_rank < 17] # exclude very slowly formed DSBs
@@ -192,7 +208,7 @@ add_distance_to_nuc_helper(object_name = "LSY4518_13B_2h_MNase_seq")
 add_distance_to_nuc_helper(object_name = "LSY4518_13B_4h_MNase_seq")
 
 
-# average and smoothen ----------------------------------------------------
+# average and smooth ------------------------------------------------------
 k <- 51
 
 # MNase-seq data
@@ -214,6 +230,24 @@ for(t in c(1, 2, 4)){
   tmp$score <- runmed(x = tmp$score, k = k)
   assign(x = paste0("S1_seq_", t), value = tmp)
 }
+
+# calc and save avg resection length
+avg_resect <- data.frame() 
+
+avg_resect <- rbind(avg_resect,
+                    data.frame(strain = "WT",
+                               time = 1,
+                               dist = find_x_where_half_AUC(x = S1_seq_1$dist_to_nuc, y = S1_seq_1$score)))
+
+avg_resect <- rbind(avg_resect,
+                    data.frame(strain = "WT",
+                               time = 2,
+                               dist = find_x_where_half_AUC(x = S1_seq_2$dist_to_nuc, y = S1_seq_2$score)))
+
+avg_resect <- rbind(avg_resect,
+                    data.frame(strain = "WT",
+                               time = 4,
+                               dist = find_x_where_half_AUC(x = S1_seq_4$dist_to_nuc, y = S1_seq_4$score)))
 
 
 # plotting ----------------------------------------------------------------
@@ -277,7 +311,7 @@ add_distance_to_nuc_helper(object_name = "LSY5415_2h_MNase_seq")
 add_distance_to_nuc_helper(object_name = "LSY5415_4h_MNase_seq")
 
 
-# average and smoothen ----------------------------------------------------
+# average and smooth ------------------------------------------------------
 k <- 51
 
 # MNase-seq data
@@ -296,6 +330,21 @@ for(t in c(1, 2, 4)){
   assign(x = paste0("S1_seq_", t), value = tmp)
 }
 
+# calc and save avg resection length
+avg_resect <- rbind(avg_resect,
+                    data.frame(strain = "fun30",
+                               time = 1,
+                               dist = find_x_where_half_AUC(x = S1_seq_1$dist_to_nuc, y = abs(S1_seq_1$score))))
+
+avg_resect <- rbind(avg_resect,
+                    data.frame(strain = "fun30",
+                               time = 2,
+                               dist = find_x_where_half_AUC(x = S1_seq_2$dist_to_nuc, y = abs(S1_seq_2$score))))
+
+avg_resect <- rbind(avg_resect,
+                    data.frame(strain = "fun30",
+                               time = 4,
+                               dist = find_x_where_half_AUC(x = S1_seq_4$dist_to_nuc, y = abs(S1_seq_4$score))))
 
 # plotting ----------------------------------------------------------------
 plot_dir <- "04_Plots/MRE11/Avgs_algned_at_DSB_prxml_nuc"
@@ -372,6 +421,9 @@ par(cex = 1, mar = rep(0,4), oma = rep(0, 4))
 plotting_function(MNase_seq_0 = MNase_seq_0, MNase_seq_1 = MNase_seq_1, MNase_seq_2 = MNase_seq_2, MNase_seq_4 = MNase_seq_4,
                   xlim = c(-160, 990))  # , nuc_marks = 1:6  
 
+# add avg resection lengths
+points(x = avg_resect$dist[avg_resect$strain == "WT"], y = rep(11.5, 3), pch = 25, bg = JFly_colors[c(1, 4, 5)], cex = 1.25)
+
 dev.off()
 GS_embed_fonts(input = "tmp.pdf", output = paste0(plot_dir, "/LSY5935.pdf"))
 
@@ -444,6 +496,9 @@ par(cex = 1, mar = rep(0,4), oma = rep(0, 4))
 plotting_function(MNase_seq_0 = MNase_seq_0, MNase_seq_1 = MNase_seq_1, MNase_seq_2 = MNase_seq_2, MNase_seq_4 = MNase_seq_4,
                   xlim = c(-160, 990))
 
+# add avg resection lengths
+points(x = avg_resect$dist[avg_resect$strain == "fun30"], y = rep(-11.5, 3), pch = 24, bg = JFly_colors[c(1, 4, 5)], cex = 1.25)
+
 dev.off()
 GS_embed_fonts(input = "tmp.pdf", output = paste0(plot_dir, "/LSY5934.pdf"))
 
@@ -457,3 +512,6 @@ tmp <- data.frame(time = c(0, 1, 2, 4),
 tmp$score <- -tmp$score
 
 write.table(x = tmp, file = paste0(plot_dir, "/Nuc+1_cov_LSY5934.txt"), row.names = FALSE)
+
+x <- 1.5
+sqrt(x^2 - (0.5 * x)^2)
