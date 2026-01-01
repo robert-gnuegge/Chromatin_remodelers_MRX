@@ -2,7 +2,7 @@
 # purpose: align MNase-seq and S1-seq data at DSB-proximal nucleosome, average and plot
 # author: Robert Gnuegge (robert.gnuegge@gmail.com)
 # created: 12/31/25
-# last modified: 12/31/25
+# last modified: 01/01/26
 
 
 # load libraries ----------------------------------------------------------
@@ -116,8 +116,122 @@ for(t in c(0, 1, 2, 4)){
   tmp <- aggregate(cbind(score, distance_to_DSB) ~ dist_to_nuc, 
                    data = get(paste0("LSY4518_13B_", t, "h_MNase_seq")), FUN = mean)
   tmp$score <- runmed(x = tmp$score, k = k)
-  assign(x = paste0("MNase_seq_", t), value = tmp)
+  assign(x = paste0("WT_MNase_seq_", t), value = tmp)
 }
+
+
+# find t = 0 nucleosome positions -----------------------------------------
+tmp <- WT_MNase_seq_0[WT_MNase_seq_0$dist_to_nuc >= -100 & WT_MNase_seq_0$dist_to_nuc <= 1200, 1:2]
+plot(x = tmp$dist_to_nuc, y = tmp$score, type = "l")
+
+fft <- filterFFT(data = tmp$score, pcKeepComp = 0.009)  # filter noise
+points(x = tmp$dist_to_nuc, y = fft, type = "l", col = "red")
+
+idx <- peakDetection(fft, threshold="10%", score=FALSE, min.cov=0.1)
+abline(v = tmp$dist_to_nuc[idx], col = "blue")
+
+WT <- tmp[idx, ]
+WT$nuc_ID <- 1:8
+WT$time <- 0
+
+ideal_nucs <- WT[WT$time == 0, c("dist_to_nuc", "nuc_ID")]
+
+# find t = 1 nucleosome positions -----------------------------------------
+tmp <- WT_MNase_seq_1[WT_MNase_seq_1$dist_to_nuc >= -100 & WT_MNase_seq_0$dist_to_nuc <= 1200, 1:2]
+plot(x = tmp$dist_to_nuc, y = tmp$score, type = "l")
+
+fft <- filterFFT(data = tmp$score, pcKeepComp = 0.01)  # filter noise
+points(x = tmp$dist_to_nuc, y = fft, type = "l", col = "red")
+
+idx <- peakDetection(fft, threshold="10%", score=FALSE, min.cov=0.1)
+abline(v = tmp$dist_to_nuc[idx], col = "blue")
+
+tmp <- tmp[idx, ]
+
+for(n in (1:nrow(tmp))){
+  idx <- which.min(abs(tmp$dist_to_nuc[n] - ideal_nucs$dist_to_nuc))
+  tmp$nuc_ID[n] <- ideal_nucs$nuc_ID[idx]
+}
+
+tmp$time <- 1
+
+WT <- rbind(WT, tmp)
+
+
+# find t = 2 nucleosome positions -----------------------------------------
+tmp <- WT_MNase_seq_2[WT_MNase_seq_2$dist_to_nuc >= -100 & WT_MNase_seq_0$dist_to_nuc <= 1200, 1:2]
+plot(x = tmp$dist_to_nuc, y = tmp$score, type = "l")
+
+fft <- filterFFT(data = tmp$score, pcKeepComp = 0.01)  # filter noise
+points(x = tmp$dist_to_nuc, y = fft, type = "l", col = "red")
+
+idx <- peakDetection(fft, threshold="10%", score=FALSE, min.cov=0.1)
+abline(v = tmp$dist_to_nuc[idx], col = "blue")
+
+tmp <- tmp[idx, ]
+
+for(n in (1:nrow(tmp))){
+  idx <- which.min(abs(tmp$dist_to_nuc[n] - ideal_nucs$dist_to_nuc))
+  tmp$nuc_ID[n] <- ideal_nucs$nuc_ID[idx]
+}
+
+tmp$time <- 2
+
+WT <- rbind(WT, tmp)
+
+
+# find t = 4 nucleosome positions -----------------------------------------
+tmp <- WT_MNase_seq_4[WT_MNase_seq_4$dist_to_nuc >= -100 & WT_MNase_seq_0$dist_to_nuc <= 1200, 1:2]
+plot(x = tmp$dist_to_nuc, y = tmp$score, type = "l")
+
+fft <- filterFFT(data = tmp$score, pcKeepComp = 0.01)  # filter noise
+points(x = tmp$dist_to_nuc, y = fft, type = "l", col = "red")
+
+idx <- peakDetection(fft, threshold="10%", score=FALSE, min.cov=0.1)
+abline(v = tmp$dist_to_nuc[idx], col = "blue")
+
+tmp <- tmp[idx, ]
+
+for(n in (1:nrow(tmp))){
+  idx <- which.min(abs(tmp$dist_to_nuc[n] - ideal_nucs$dist_to_nuc))
+  tmp$nuc_ID[n] <- ideal_nucs$nuc_ID[idx]
+}
+
+tmp$time <- 4
+
+WT <- rbind(WT, tmp)
+WT <- WT[WT$nuc_ID <= 7, ]
+
+
+
+# plotting ----------------------------------------------------------------
+library(shape)
+
+plot_dir <- "04_Plots/MRE11/DSB_prxml_nucs_over_time"
+dir.create(path = plot_dir, showWarnings = FALSE)
+
+WT <- WT[!(WT$nuc_ID == 1 & WT$time > 0), ]
+
+pdf(file = "tmp.pdf", width=3, height=1.5)
+par(cex = 1, mar = rep(0,4), oma = rep(0, 4))
+
+y <- c(4:1) * 1
+plot(x = NA, y = NA, xlim = c(-200, 1080), ylim = c(0.75 * min(y), 1.25 * max(y)), axes = FALSE, ann = FALSE)
+
+x <- WT$dist_to_nuc[WT$time == 0 & WT$nuc_ID <= 7]
+text(x = x, y = (max(y) + 0.33 * min(y)), labels = paste0("+", 1:7), pos = 3)
+segments(x0 = x, x1 = x, y0 = min(y), y1 = max(y), lty = "dashed")
+
+text(x = -80, y = y, labels = paste0(c(0, 1, 2, 4), " h"), pos = 2)
+
+mapping <- data.frame(t = c(0, 1, 2, 4), idx = 1:4)
+WT$y <- y[match(x = WT$time, table = mapping$t)]
+
+points(x = WT$dist_to_nuc, y = WT$y, pch = 21, bg = gray(level = 1 - (WT$score - min(WT$score)) / (max(WT$score) - min(WT$score))), cex = 2)
+
+dev.off()
+GS_embed_fonts(input = "tmp.pdf", output = paste0(plot_dir, "/LSY4518-13B.pdf"))
+
 
 
 # LSY5415 =============================================================
@@ -164,14 +278,118 @@ for(t in c(0, 1, 2, 4)){
   tmp <- aggregate(score ~ dist_to_nuc, 
                    data = get(paste0("LSY5415_", t, "h_MNase_seq")), FUN = mean)
   tmp$score <- runmed(x = tmp$score, k = k)
-  assign(x = paste0("MNase_seq_", t), value = tmp)
+  assign(x = paste0("fun30_MNase_seq_", t), value = tmp)
 }
 
-tmp <- MNase_seq_4[MNase_seq_4$dist_to_nuc <= 1100, ]
+# find t = 0 nucleosome positions -----------------------------------------
+tmp <- fun30_MNase_seq_0[fun30_MNase_seq_0$dist_to_nuc >= -100 & fun30_MNase_seq_0$dist_to_nuc <= 1200, 1:2]
 plot(x = tmp$dist_to_nuc, y = tmp$score, type = "l")
 
 fft <- filterFFT(data = tmp$score, pcKeepComp = 0.009)  # filter noise
-idx <- peakDetection(fft, threshold="10%", score=FALSE, min.cov = 0.1)
+points(x = tmp$dist_to_nuc, y = fft, type = "l", col = "red")
 
-tmp$dist_to_nuc[idx]
-abline(v = tmp$dist_to_nuc[idx])
+idx <- peakDetection(fft, threshold="10%", score=FALSE, min.cov=0.1)
+abline(v = tmp$dist_to_nuc[idx], col = "blue")
+
+fun30 <- tmp[idx, ]
+fun30$nuc_ID <- 1:8
+fun30$time <- 0
+
+ideal_nucs <- fun30[fun30$time == 0, c("dist_to_nuc", "nuc_ID")]
+
+# find t = 1 nucleosome positions -----------------------------------------
+tmp <- fun30_MNase_seq_1[fun30_MNase_seq_1$dist_to_nuc >= -100 & fun30_MNase_seq_0$dist_to_nuc <= 1200, 1:2]
+plot(x = tmp$dist_to_nuc, y = tmp$score, type = "l")
+
+fft <- filterFFT(data = tmp$score, pcKeepComp = 0.01)  # filter noise
+points(x = tmp$dist_to_nuc, y = fft, type = "l", col = "red")
+
+idx <- peakDetection(fft, threshold="10%", score=FALSE, min.cov=0.1)
+abline(v = tmp$dist_to_nuc[idx], col = "blue")
+
+tmp <- tmp[idx, ]
+
+for(n in (1:nrow(tmp))){
+  idx <- which.min(abs(tmp$dist_to_nuc[n] - ideal_nucs$dist_to_nuc))
+  tmp$nuc_ID[n] <- ideal_nucs$nuc_ID[idx]
+}
+
+tmp$time <- 1
+
+fun30 <- rbind(fun30, tmp)
+
+
+# find t = 2 nucleosome positions -----------------------------------------
+tmp <- fun30_MNase_seq_2[fun30_MNase_seq_2$dist_to_nuc >= -100 & fun30_MNase_seq_0$dist_to_nuc <= 1200, 1:2]
+plot(x = tmp$dist_to_nuc, y = tmp$score, type = "l")
+
+fft <- filterFFT(data = tmp$score, pcKeepComp = 0.01)  # filter noise
+points(x = tmp$dist_to_nuc, y = fft, type = "l", col = "red")
+
+idx <- peakDetection(fft, threshold="10%", score=FALSE, min.cov=0.1)
+abline(v = tmp$dist_to_nuc[idx], col = "blue")
+
+tmp <- tmp[idx, ]
+
+for(n in (1:nrow(tmp))){
+  idx <- which.min(abs(tmp$dist_to_nuc[n] - ideal_nucs$dist_to_nuc))
+  tmp$nuc_ID[n] <- ideal_nucs$nuc_ID[idx]
+}
+
+tmp$time <- 2
+
+fun30 <- rbind(fun30, tmp)
+
+
+# find t = 4 nucleosome positions -----------------------------------------
+tmp <- fun30_MNase_seq_4[fun30_MNase_seq_4$dist_to_nuc >= -100 & fun30_MNase_seq_0$dist_to_nuc <= 1200, 1:2]
+plot(x = tmp$dist_to_nuc, y = tmp$score, type = "l")
+
+fft <- filterFFT(data = tmp$score, pcKeepComp = 0.0105)  # filter noise
+points(x = tmp$dist_to_nuc, y = fft, type = "l", col = "red")
+
+idx <- peakDetection(fft, threshold="10%", score=FALSE, min.cov=0.1)
+abline(v = tmp$dist_to_nuc[idx], col = "blue")
+
+tmp <- tmp[idx, ]
+
+for(n in (1:nrow(tmp))){
+  idx <- which.min(abs(tmp$dist_to_nuc[n] - ideal_nucs$dist_to_nuc))
+  tmp$nuc_ID[n] <- ideal_nucs$nuc_ID[idx]
+}
+
+tmp$time <- 4
+
+fun30 <- rbind(fun30, tmp)
+old_fun30 <- fun30
+fun30 <- fun30[fun30$nuc_ID <= 7, ]
+
+
+
+# plotting ----------------------------------------------------------------
+library(shape)
+
+plot_dir <- "04_Plots/MRE11/DSB_prxml_nucs_over_time"
+dir.create(path = plot_dir, showWarnings = FALSE)
+
+fun30 <- fun30[!(fun30$nuc_ID == 1 & fun30$time > 1), ]
+
+pdf(file = "tmp.pdf", width=3, height=1.5)
+par(cex = 1, mar = rep(0,4), oma = rep(0, 4))
+
+y <- c(4:1) * 1
+plot(x = NA, y = NA, xlim = c(-200, 1080), ylim = c(0.75 * min(y), 1.25 * max(y)), axes = FALSE, ann = FALSE)
+
+x <- fun30$dist_to_nuc[fun30$time == 0 & fun30$nuc_ID <= 7]
+text(x = x, y = (max(y) + 0.33 * min(y)), labels = paste0("+", 1:7), pos = 3)
+segments(x0 = x, x1 = x, y0 = min(y), y1 = max(y), lty = "dashed")
+
+text(x = -80, y = y, labels = paste0(c(0, 1, 2, 4), " h"), pos = 2)
+
+mapping <- data.frame(t = c(0, 1, 2, 4), idx = 1:4)
+fun30$y <- y[match(x = fun30$time, table = mapping$t)]
+
+points(x = fun30$dist_to_nuc, y = fun30$y, pch = 21, bg = gray(level = 1 - (fun30$score - min(fun30$score)) / (max(fun30$score) - min(fun30$score))), cex = 2)
+
+dev.off()
+GS_embed_fonts(input = "tmp.pdf", output = paste0(plot_dir, "/LSY5415.pdf"))
