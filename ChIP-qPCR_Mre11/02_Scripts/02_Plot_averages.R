@@ -2,7 +2,7 @@
 # purpose: plot ChIP-qPCR data
 # author: Robert Gnuegge (robert.gnuegge@gmail.com)
 # created: 04/22/24
-# last modified: 04/22/24
+# last modified: 02/27/26
 
 # read helper functions and files -----------------------------------------
 source(file = "../Src/JFly_colors.R")
@@ -18,7 +18,7 @@ raw_data$strain[raw_data$sample == "No Ab"] <- "No Ab"  # for easier data sortin
 
 
 # plotting function -------------------------------------------------------
-my_plot <- function(avg_data, raw_data, strains, colors, file_name, y_range = NULL, width=2.5, height=2.5){
+my_plot <- function(avg_data, raw_data, strains, colors, file_name, y_range = NULL, width=2.5, height=2.5, p_values = NULL, p_values_y = NULL){
   
   if(is.null(y_range)){
     y_range <- range(c(avg_data$mean + avg_data$sd, avg_data$mean - avg_data$sd, raw_data$mean, 0), na.rm = TRUE)
@@ -95,6 +95,10 @@ GS_embed_fonts(input = "tmp.pdf", output = paste0(plot_dir, "Legend_horiz.pdf"))
 avg <- avg_data[avg_data$strain %in% strains & avg_data$primers == "oRG50_oRG51", ]
 raw <- raw_data[raw_data$strain %in% strains & raw_data$primers == "oRG50_oRG51", ]
 
+wilcox.test(mean ~ strain, data = raw, subset = (raw$sample != "No Ab" & raw$time == 1))
+wilcox.test(mean ~ strain, data = raw, subset = (raw$sample != "No Ab" & raw$time == 2))
+wilcox.test(mean ~ strain, data = raw, subset = (raw$sample != "No Ab" & raw$time == 4))
+
 my_plot(avg_data = avg, raw_data = raw, y_range = c(-0.1, 5.3),
         strains = strains, colors = MyColors, file_name = paste0(plot_dir, "Percent_input_98_bp.pdf"))
 
@@ -102,6 +106,10 @@ my_plot(avg_data = avg, raw_data = raw, y_range = c(-0.1, 5.3),
 # +640 bp ---------------------------------------------------------------------
 avg <- avg_data[avg_data$strain %in% strains & avg_data$primers == "oRG52_oRG53", ]
 raw <- raw_data[raw_data$strain %in% strains & raw_data$primers == "oRG52_oRG53", ]
+
+wilcox.test(mean ~ strain, data = raw, subset = (raw$sample != "No Ab" & raw$time == 1))
+wilcox.test(mean ~ strain, data = raw, subset = (raw$sample != "No Ab" & raw$time == 2))
+wilcox.test(mean ~ strain, data = raw, subset = (raw$sample != "No Ab" & raw$time == 4))
 
 my_plot(avg_data = avg, raw_data = raw, y_range = c(-0.1, 5.3),
         strains = strains, colors = MyColors, file_name = paste0(plot_dir, "Percent_input_647_bp.pdf"))

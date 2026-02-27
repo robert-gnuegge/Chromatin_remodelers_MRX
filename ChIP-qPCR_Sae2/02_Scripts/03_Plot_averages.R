@@ -2,7 +2,7 @@
 # purpose: plot ChIP-qPCR data
 # author: Robert Gnuegge (robert.gnuegge@gmail.com)
 # created: 05/11/25
-# last modified: 05/11/25
+# last modified: 02/27/26
 
 # read helper functions and files -----------------------------------------
 source(file = "../Src/JFly_colors.R")
@@ -94,12 +94,18 @@ GS_embed_fonts(input = "tmp.pdf", output = paste0(plot_dir, "Legend_horiz.pdf"))
 avg <- avg_data[avg_data$strain %in% strains & avg_data$primers == "oRG50_oRG51", ]
 raw <- raw_data[raw_data$strain %in% strains & raw_data$primers == "oRG50_oRG51", ]
 
+wilcox.test(mean ~ strain, data = raw, subset = (raw$time == 1))
+wilcox.test(mean ~ strain, data = raw, subset = (raw$time == 4))
+
 my_plot(avg_data = avg, raw_data = raw, y_range = c(-0.001, 0.09),
         strains = strains, colors = MyColors, file_name = paste0(plot_dir, "Percent_input_98_bp.pdf"))
 
 # +647 bp ----------------------------------------------------------------------
 avg <- avg_data[avg_data$strain %in% strains & avg_data$primers == "oRG52_oRG53", ]
 raw <- raw_data[raw_data$strain %in% strains & raw_data$primers == "oRG52_oRG53", ]
+
+wilcox.test(mean ~ strain, data = raw, subset = (raw$time == 1))
+wilcox.test(mean ~ strain, data = raw, subset = (raw$time == 4))
 
 my_plot(avg_data = avg, raw_data = raw, y_range = c(-0.001, 0.09),
         strains = strains, colors = MyColors, file_name = paste0(plot_dir, "Percent_input_647_bp.pdf"))
