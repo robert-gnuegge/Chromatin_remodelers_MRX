@@ -74,7 +74,7 @@ MyColors <- c("gray", JFly_colors[2])
 
 
 # plot legend -------------------------------------------------------------
-Legend_txt <- c("WT", expression(italic("fun30"*Delta)))
+Legend_txt <- c(expression(italic("FUN30")), expression(italic("fun30"*Delta)))
 
 pdf(file = "tmp.pdf", width=1.1, height=0.65)
 par(cex = 1, mar = rep(0, 4))

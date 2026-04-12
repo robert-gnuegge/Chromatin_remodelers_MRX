@@ -68,7 +68,7 @@ strains <- c("4518-13B", "5415", "5965", "5967", "5953", "5935", "5934")
 MyColors <- c(JFly_colors[1:5], "gray", JFly_colors[8])
 
 # plot legend -------------------------------------------------------------
-Legend_txt <- c("WT",
+Legend_txt <- c("Control",
                 expression(italic("fun30"*Delta)),
                 expression(italic("FUN30-9MYC")),
                 expression(italic("fun30-K603R-9MYC")),
@@ -86,7 +86,7 @@ GS_embed_fonts(input = "tmp.pdf", output = paste0(plot_dir, "Legend.pdf"))
 
 
 # plot horizontal legend -------------------------------------------------------------
-Legend_txt <- c("WT",
+Legend_txt <- c("Control",
                 expression(italic("mre11-H125N")),
                 expression(italic("mre11-H125N fun30"*Delta)),
                 expression(italic("FUN30-9MYC")),

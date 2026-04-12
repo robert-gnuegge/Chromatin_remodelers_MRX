@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.6.6)  26 DEC 2025 10:44
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020) (preloaded format=pdflatex 2020.6.6)  12 APR 2026 12:10
 entering extended mode
  \write18 enabled.
  %&-line parsing enabled.
@@ -467,9 +467,9 @@ LaTeX Font Info:    External font `cmex10' loaded for size
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <5> on input line 37.
 LaTeX Font Info:    Font shape `OT1/phv/m/it' in size <10> not available
-(Font)              Font shape `OT1/phv/m/sl' tried instead on input line 77.
+(Font)              Font shape `OT1/phv/m/sl' tried instead on input line 75.
 LaTeX Font Info:    Font shape `OT1/phv/m/sl' will be
-(Font)              scaled to size 9.19998pt on input line 77.
+(Font)              scaled to size 9.19998pt on input line 75.
 <Pgk1_SrfI.jpg, id=5, 899.36pt x 188.705pt>
 File: Pgk1_SrfI.jpg Graphic file (type jpg)
 <use Pgk1_SrfI.jpg>
@@ -495,7 +495,7 @@ public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/ur
 w/helvetic/uhvb8a.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/urw/helve
 tic/uhvr8a.pfb></usr/local/texlive/2020/texmf-dist/fonts/type1/urw/helvetic/uhv
 ro8a.pfb>
-Output written on WB_SrfI.pdf (1 page, 101266 bytes).
+Output written on WB_SrfI.pdf (1 page, 101447 bytes).
 PDF statistics:
  34 PDF objects out of 1000 (max. 8388607)
  23 compressed objects within 1 object stream

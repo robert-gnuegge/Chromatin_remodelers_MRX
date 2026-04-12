@@ -204,7 +204,8 @@ points(x = 1:70, y = fun30$MGW, type = "l", col = JFly_colors[2])
 points(x = 1:70, y = WT_bg$MGW, type = "l", lty = "dashed")
 points(x = 1:70, y = fun30_bg$MGW, type = "l", lty = "dashed", col = JFly_colors[2])
 
-legend(x = "bottomleft", legend = c("WT background", "WT observed"), lty = c("dashed", "solid"), bty = "n", inset = 0.03)
+Leg_txt <- c(expression(italic("FUN30")~"background"), expression(italic("FUN30")~"observed"))
+legend(x = "bottomleft", legend = Leg_txt, lty = c("dashed", "solid"), bty = "n", inset = 0.03)
 Leg_txt <- c(expression(italic("fun30"*Delta)~"background"), expression(italic("fun30"*Delta)~"observed"))
 legend(x = "bottomright", legend = Leg_txt, lty = c("dashed", "solid"), col = JFly_colors[2],  bty = "n", inset = 0.03)
 

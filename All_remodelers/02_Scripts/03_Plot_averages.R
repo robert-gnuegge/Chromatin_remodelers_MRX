@@ -65,10 +65,10 @@ plot_dir <- "04_Plots/"
 # dir.create(path = plot_dir, recursive = TRUE, showWarnings = FALSE)
 strains <- c("4518-13B", "5415", "4822-3C", "4994-89A", "5983", "5758", "5985", "5986", "5987")
 # WT, fun30, sth1-frb, snf2-frb, ino80-frb, chd1, swr1, isw1, isw2
-MyColors <- c(JFlyColors, "gray")
+MyColors <- c(JFly_colors, "gray")
 
 # plot legend -------------------------------------------------------------
-Legend_txt <- c("WT",
+Legend_txt <- c("Control",
                 expression(italic("fun30"*Delta)),
                 expression(italic("sth1-aa")),
                 expression(italic("snf2-aa")),
