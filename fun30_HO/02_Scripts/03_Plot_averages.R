@@ -67,9 +67,9 @@ strains <- c("4518-13B", "5415", "5495-30D", "5692-15B")  # WT SrfI, fun30 SrfI,
 MyColors <- c(JFly_colors[1:2], "gray", JFly_colors[6])
 
 # plot legend -------------------------------------------------------------
-Legend_txt <- c("WT SrfI",
+Legend_txt <- c(expression(italic("FUN30")~"SrfI"),
                 expression(italic("fun30")*Delta~"SrfI"),
-                "WT HO",
+                expression(italic("FUN30")~"HO"),
                 expression(italic("fun30")*Delta~"HO"))
 
 pdf(file = "tmp.pdf", width=1.25, height=1.05)

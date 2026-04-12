@@ -67,9 +67,9 @@ strains <- c("4518-13B", "5415", "5452", "5451")  # WT, fun30, rad9, fun30 rad9
 MyColors <- JFly_colors[1:length(strains)]
 
 # plot legend -------------------------------------------------------------
-Legend_txt <- c("WT",
-                expression(italic("fun30"*Delta)),
-                expression(italic("rad9"*Delta)),
+Legend_txt <- c(expression(italic("FUN30 RAD9")),
+                expression(italic("fun30"*Delta~"RAD9")),
+                expression(italic("FUN30 rad9"*Delta)),
                 expression(italic("fun30"*Delta~"rad9"*Delta)))
 
 idx <- c(1, 3, 2, 4)
