@@ -1,4 +1,4 @@
-# Chromatin_remodelers_MRX [![DOI](https://zenodo.org/badge/438784647.svg)](https://zenodo.org/badge/latestdoi/438784647)
+# Chromatin_remodelers_MRX
 
 Code to analyze the data of our project investigating the impact of chromatin remodelers on MRX nicking at DSBs.
 See publication for software versions. Find R package versions below (output of `sessionInfo()`):
